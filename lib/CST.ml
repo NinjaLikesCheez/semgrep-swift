@@ -885,7 +885,10 @@ and if_condition_sequence_item = [
     )
   | `Exp of directly_assignable_expression
   | `Avai_cond of (
-        Token.t (* "#available" *)
+        [
+            `HASH_8da4fa1 of Token.t (* "#available" *)
+          | `HASH_459dd9a of Token.t (* "#unavailable" *)
+        ]
       * Token.t (* "(" *)
       * availability_argument
       * (Token.t (* "," *) * availability_argument) list (* zero or more *)
@@ -1764,7 +1767,10 @@ type modifier (* inlined *) = [
 ]
 
 type availability_condition (* inlined *) = (
-    Token.t (* "#available" *)
+    [
+        `HASH_8da4fa1 of Token.t (* "#available" *)
+      | `HASH_459dd9a of Token.t (* "#unavailable" *)
+    ]
   * Token.t (* "(" *)
   * availability_argument
   * (Token.t (* "," *) * availability_argument) list (* zero or more *)

@@ -1982,7 +1982,16 @@ and map_if_condition_sequence_item (env : env) (x : CST.if_condition_sequence_it
       map_directly_assignable_expression env x
     )
   | `Avai_cond (v1, v2, v3, v4, v5) -> R.Case ("Avai_cond",
-      let v1 = (* "#available" *) token env v1 in
+      let v1 =
+        (match v1 with
+        | `HASH_8da4fa1 tok -> R.Case ("HASH_8da4fa1",
+            (* "#available" *) token env tok
+          )
+        | `HASH_459dd9a tok -> R.Case ("HASH_459dd9a",
+            (* "#unavailable" *) token env tok
+          )
+        )
+      in
       let v2 = (* "(" *) token env v2 in
       let v3 = map_availability_argument env v3 in
       let v4 =

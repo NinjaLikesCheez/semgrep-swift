@@ -653,7 +653,10 @@ let children_regexps : (string * Run.exp option) list = [
   "availability_condition",
   Some (
     Seq [
-      Token (Literal "#available");
+      Alt [|
+        Token (Literal "#available");
+        Token (Literal "#unavailable");
+      |];
       Token (Literal "(");
       Token (Name "availability_argument");
       Repeat (
@@ -4697,7 +4700,18 @@ let trans_availability_condition ((kind, body) : mt) : CST.availability_conditio
       (match v with
       | Seq [v0; v1; v2; v3; v4] ->
           (
-            Run.trans_token (Run.matcher_token v0),
+            (match v0 with
+            | Alt (0, v) ->
+                `HASH_8da4fa1 (
+                  Run.trans_token (Run.matcher_token v)
+                )
+            | Alt (1, v) ->
+                `HASH_459dd9a (
+                  Run.trans_token (Run.matcher_token v)
+                )
+            | _ -> assert false
+            )
+            ,
             Run.trans_token (Run.matcher_token v1),
             trans_availability_argument (Run.matcher_token v2),
             Run.repeat
