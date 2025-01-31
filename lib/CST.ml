@@ -375,6 +375,8 @@ type line_string_content = [
 type value_argument_label = [
     `Simple_id of bound_identifier
   | `Async of Token.t (* "async" *)
+  | `If of Token.t (* "if" *)
+  | `Switch of Token.t (* "switch" *)
 ]
 
 type identifier = (
@@ -806,6 +808,8 @@ and expression = [
       | `Bin_exp of binary_expression
       | `Tern_exp of ternary_expression
       | `Prim_exp of primary_expression
+      | `If_stmt of if_statement
+      | `Switch_stmt of switch_statement
       | `Assign of assignment
       | `Exp_imme_quest of (
             directly_assignable_expression * Token.t (* "?" *)
@@ -1573,7 +1577,17 @@ and unary_expression = [
         ]
       * navigation_suffix
     )
-  | `Prefix_exp of (prefix_unary_operator * directly_assignable_expression)
+  | `Prefix_exp of (
+        prefix_unary_operator
+      * [
+            `Exp of directly_assignable_expression
+          | `Choice_async of [
+                `Async of Token.t (* "async" *)
+              | `If of Token.t (* "if" *)
+              | `Switch of Token.t (* "switch" *)
+            ]
+        ]
+    )
   | `As_exp of (directly_assignable_expression * as_operator * type_)
   | `Sele_exp of (
         Token.t (* "#selector" *)
@@ -2038,7 +2052,15 @@ type postfix_expression (* inlined *) = (
 )
 
 type prefix_expression (* inlined *) = (
-    prefix_unary_operator * directly_assignable_expression
+    prefix_unary_operator
+  * [
+        `Exp of directly_assignable_expression
+      | `Choice_async of [
+            `Async of Token.t (* "async" *)
+          | `If of Token.t (* "if" *)
+          | `Switch of Token.t (* "switch" *)
+        ]
+    ]
 )
 
 type protocol_composition_type (* inlined *) = (

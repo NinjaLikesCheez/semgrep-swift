@@ -1,6 +1,6 @@
 File: semgrep-grammars/src/tree-sitter-swift/LICENSE
 Git repo name: tree-sitter-swift
-Latest commit in repo: 7e4ccc97a25315022a70b730085deccd5680a39b
+Latest commit in repo: f3063c6c25f71061421f456883eb0b55b56159c0
 Last change in file:
   commit 90cd9604a7db32fbec45a040a7bdb6aaa89b565c
   gpg: Signature made Sat Aug 14 18:10:20 2021 CEST
@@ -13,15 +13,25 @@ Last change in file:
 ---
 File: semgrep-grammars/src/tree-sitter-swift/grammar.js
 Git repo name: tree-sitter-swift
-Latest commit in repo: 7e4ccc97a25315022a70b730085deccd5680a39b
+Latest commit in repo: f3063c6c25f71061421f456883eb0b55b56159c0
 Last change in file:
-  commit 7e4ccc97a25315022a70b730085deccd5680a39b
-  Author: Alex Pinkus <pinkus@amazon.com>
-  Date:   Sun Oct 8 16:55:43 2023 -0700
+  commit f3063c6c25f71061421f456883eb0b55b56159c0
+  Author: Alex Pinkus <alex.pinkus@gmail.com>
+  Date:   Mon Feb 12 18:38:54 2024 -0800
   
-      Update availability conditions to support #unavailable
+      Add support for if/switch expressions
       
-      Fixes one of the failures from #323
+      As pointed out in #351.
+      
+      [SE-0380](https://github.com/apple/swift-evolution/blob/main/proposals/0380-if-switch-expressions.md)
+      made it possible to do this, but support was lacking in this repository.
+      The fix turned out to be easier than anticipated, simply requiring the
+      statement to be added in some new places. Theoretically, it should also
+      be renamed, but that would make this a breaking change.
+      
+      The proposal does not make clear whether labels are permitted on
+      expression-position `if` and `switch` statements. This assumes they are
+      not, for simplicity.
 ---
 File: semgrep-grammars/src/semgrep-swift/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep

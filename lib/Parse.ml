@@ -536,6 +536,8 @@ let children_regexps : (string * Run.exp option) list = [
     Alt [|
       Token (Name "simple_identifier");
       Token (Literal "async");
+      Token (Literal "if");
+      Token (Literal "switch");
     |];
   );
   "tuple_type_item_identifier",
@@ -1453,6 +1455,8 @@ let children_regexps : (string * Run.exp option) list = [
         Token (Name "binary_expression");
         Token (Name "ternary_expression");
         Token (Name "primary_expression");
+        Token (Name "if_statement");
+        Token (Name "switch_statement");
         Token (Name "assignment");
         Seq [
           Token (Name "expression");
@@ -2278,7 +2282,14 @@ let children_regexps : (string * Run.exp option) list = [
   Some (
     Seq [
       Token (Name "prefix_unary_operator");
-      Token (Name "expression");
+      Alt [|
+        Token (Name "expression");
+        Alt [|
+          Token (Literal "async");
+          Token (Literal "if");
+          Token (Literal "switch");
+        |];
+      |];
     ];
   );
   "primary_expression",
@@ -4429,6 +4440,14 @@ let trans_value_argument_label ((kind, body) : mt) : CST.value_argument_label =
           `Async (
             Run.trans_token (Run.matcher_token v)
           )
+      | Alt (2, v) ->
+          `If (
+            Run.trans_token (Run.matcher_token v)
+          )
+      | Alt (3, v) ->
+          `Switch (
+            Run.trans_token (Run.matcher_token v)
+          )
       | _ -> assert false
       )
   | Leaf _ -> assert false
@@ -6317,10 +6336,18 @@ and trans_expression ((kind, body) : mt) : CST.expression =
                   trans_primary_expression (Run.matcher_token v)
                 )
             | Alt (5, v) ->
+                `If_stmt (
+                  trans_if_statement (Run.matcher_token v)
+                )
+            | Alt (6, v) ->
+                `Switch_stmt (
+                  trans_switch_statement (Run.matcher_token v)
+                )
+            | Alt (7, v) ->
                 `Assign (
                   trans_assignment (Run.matcher_token v)
                 )
-            | Alt (6, v) ->
+            | Alt (8, v) ->
                 `Exp_imme_quest (
                   (match v with
                   | Seq [v0; v1] ->
@@ -6331,7 +6358,7 @@ and trans_expression ((kind, body) : mt) : CST.expression =
                   | _ -> assert false
                   )
                 )
-            | Alt (7, v) ->
+            | Alt (9, v) ->
                 `Async (
                   Run.trans_token (Run.matcher_token v)
                 )
@@ -8027,7 +8054,31 @@ and trans_prefix_expression ((kind, body) : mt) : CST.prefix_expression =
       | Seq [v0; v1] ->
           (
             trans_prefix_unary_operator (Run.matcher_token v0),
-            trans_expression (Run.matcher_token v1)
+            (match v1 with
+            | Alt (0, v) ->
+                `Exp (
+                  trans_expression (Run.matcher_token v)
+                )
+            | Alt (1, v) ->
+                `Choice_async (
+                  (match v with
+                  | Alt (0, v) ->
+                      `Async (
+                        Run.trans_token (Run.matcher_token v)
+                      )
+                  | Alt (1, v) ->
+                      `If (
+                        Run.trans_token (Run.matcher_token v)
+                      )
+                  | Alt (2, v) ->
+                      `Switch (
+                        Run.trans_token (Run.matcher_token v)
+                      )
+                  | _ -> assert false
+                  )
+                )
+            | _ -> assert false
+            )
           )
       | _ -> assert false
       )

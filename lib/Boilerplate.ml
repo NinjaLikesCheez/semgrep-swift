@@ -799,6 +799,12 @@ let map_value_argument_label (env : env) (x : CST.value_argument_label) =
   | `Async tok -> R.Case ("Async",
       (* "async" *) token env tok
     )
+  | `If tok -> R.Case ("If",
+      (* "if" *) token env tok
+    )
+  | `Switch tok -> R.Case ("Switch",
+      (* "switch" *) token env tok
+    )
   )
 
 let map_identifier (env : env) ((v1, v2) : CST.identifier) =
@@ -1787,6 +1793,12 @@ and map_expression (env : env) (x : CST.expression) =
         )
       | `Prim_exp x -> R.Case ("Prim_exp",
           map_primary_expression env x
+        )
+      | `If_stmt x -> R.Case ("If_stmt",
+          map_if_statement env x
+        )
+      | `Switch_stmt x -> R.Case ("Switch_stmt",
+          map_switch_statement env x
         )
       | `Assign x -> R.Case ("Assign",
           map_assignment env x
@@ -3679,7 +3691,26 @@ and map_unary_expression (env : env) (x : CST.unary_expression) =
     )
   | `Prefix_exp (v1, v2) -> R.Case ("Prefix_exp",
       let v1 = map_prefix_unary_operator env v1 in
-      let v2 = map_directly_assignable_expression env v2 in
+      let v2 =
+        (match v2 with
+        | `Exp x -> R.Case ("Exp",
+            map_directly_assignable_expression env x
+          )
+        | `Choice_async x -> R.Case ("Choice_async",
+            (match x with
+            | `Async tok -> R.Case ("Async",
+                (* "async" *) token env tok
+              )
+            | `If tok -> R.Case ("If",
+                (* "if" *) token env tok
+              )
+            | `Switch tok -> R.Case ("Switch",
+                (* "switch" *) token env tok
+              )
+            )
+          )
+        )
+      in
       R.Tuple [v1; v2]
     )
   | `As_exp (v1, v2, v3) -> R.Case ("As_exp",
