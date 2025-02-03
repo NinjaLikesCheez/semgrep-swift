@@ -1,6 +1,6 @@
 File: semgrep-grammars/src/tree-sitter-swift/LICENSE
 Git repo name: tree-sitter-swift
-Latest commit in repo: 52ea5d1c64bef75521b0943fbafbd3db7be60a53
+Latest commit in repo: 1ebc09c38f41d6aab7dd65ca0f8ea032ced0364f
 Last change in file:
   commit 90cd9604a7db32fbec45a040a7bdb6aaa89b565c
   gpg: Signature made Sat 14 Aug 18:10:20 2021 CEST
@@ -13,13 +13,13 @@ Last change in file:
 ---
 File: semgrep-grammars/src/tree-sitter-swift/grammar.js
 Git repo name: tree-sitter-swift
-Latest commit in repo: 52ea5d1c64bef75521b0943fbafbd3db7be60a53
+Latest commit in repo: 1ebc09c38f41d6aab7dd65ca0f8ea032ced0364f
 Last change in file:
-  commit 52ea5d1c64bef75521b0943fbafbd3db7be60a53
-  Author: Alex Pinkus <alex.pinkus@gmail.com>
-  Date:   Mon Feb 12 20:46:50 2024 -0800
+  commit 247d159ea87d2653ad0e669f69b638cd476fe699
+  Author: Benjamin Davies <bentendavies@gmail.com>
+  Date:   Sun Dec 1 21:59:16 2024 +1300
   
-      Allow the ampersand operator to be overridden
+      Add support for hex real literals
 ---
 File: semgrep-grammars/src/semgrep-swift/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
