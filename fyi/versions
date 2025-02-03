@@ -1,6 +1,6 @@
 File: semgrep-grammars/src/tree-sitter-swift/LICENSE
 Git repo name: tree-sitter-swift
-Latest commit in repo: e56541b6dd00bb0955cbc34e0cdaa93b8709c82d
+Latest commit in repo: ac8fb560b97afb6db7170ef394de2c88f4243590
 Last change in file:
   commit 90cd9604a7db32fbec45a040a7bdb6aaa89b565c
   gpg: Signature made Sat 14 Aug 18:10:20 2021 CEST
@@ -13,16 +13,13 @@ Last change in file:
 ---
 File: semgrep-grammars/src/tree-sitter-swift/grammar.js
 Git repo name: tree-sitter-swift
-Latest commit in repo: e56541b6dd00bb0955cbc34e0cdaa93b8709c82d
+Latest commit in repo: ac8fb560b97afb6db7170ef394de2c88f4243590
 Last change in file:
-  commit e56541b6dd00bb0955cbc34e0cdaa93b8709c82d
+  commit ac8fb560b97afb6db7170ef394de2c88f4243590
   Author: Alex Pinkus <alex.pinkus@gmail.com>
-  Date:   Mon Feb 12 21:05:05 2024 -0800
+  Date:   Mon Feb 12 21:33:04 2024 -0800
   
-      Allow certain types as the target of a navigation expression
-      
-      It's not clear what in the grammar allows that, but it's clearly allowed
-      since it is used in top-repos.
+      Add macro support
 ---
 File: semgrep-grammars/src/semgrep-swift/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
