@@ -930,6 +930,9 @@ let map_referenceable_operator (env : env) (x : CST.referenceable_operator) =
   | `GTGT tok -> R.Case ("GTGT",
       (* ">>" *) token env tok
     )
+  | `AMP tok -> R.Case ("AMP",
+      (* "&" *) token env tok
+    )
   )
 
 let map_availability_argument (env : env) (x : CST.availability_argument) =

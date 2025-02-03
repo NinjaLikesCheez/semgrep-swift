@@ -428,6 +428,7 @@ type referenceable_operator = [
   | `HAT of Token.t (* "^" *)
   | `LTLT of Token.t (* "<<" *)
   | `GTGT of Token.t (* ">>" *)
+  | `AMP of Token.t (* "&" *)
 ]
 
 type availability_argument = [

@@ -637,6 +637,7 @@ let children_regexps : (string * Run.exp option) list = [
       Token (Literal "^");
       Token (Literal "<<");
       Token (Literal ">>");
+      Token (Literal "&");
     |];
   );
   "protocol_property_requirements",
@@ -4678,6 +4679,10 @@ let trans_referenceable_operator ((kind, body) : mt) : CST.referenceable_operato
           )
       | Alt (13, v) ->
           `GTGT (
+            Run.trans_token (Run.matcher_token v)
+          )
+      | Alt (14, v) ->
+          `AMP (
             Run.trans_token (Run.matcher_token v)
           )
       | _ -> assert false
