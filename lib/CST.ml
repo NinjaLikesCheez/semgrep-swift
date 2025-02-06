@@ -856,10 +856,17 @@ and for_statement = (
   * binding_pattern_no_expr
   * type_annotation option
   * Token.t (* "in" *)
-  * directly_assignable_expression
+  * for_statement_collection
   * where_clause option
   * function_body
 )
+
+and for_statement_collection = [
+    `Exp of directly_assignable_expression
+  | `For_stmt_await of (
+        Token.t (* "await" *) * directly_assignable_expression
+    )
+]
 
 and function_body = block
 
@@ -1972,6 +1979,10 @@ type equality_expression (* inlined *) = (
 
 type expr_hack_at_ternary_binary_call (* inlined *) = (
     directly_assignable_expression * expr_hack_at_ternary_binary_call_suffix
+)
+
+type for_statement_await (* inlined *) = (
+    Token.t (* "await" *) * directly_assignable_expression
 )
 
 type if_let_binding (* inlined *) = (

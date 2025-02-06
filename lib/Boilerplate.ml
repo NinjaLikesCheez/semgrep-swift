@@ -1903,7 +1903,7 @@ and map_for_statement (env : env) ((v1, v2, v3, v4, v5, v6, v7, v8, v9) : CST.fo
     | None -> R.Option None)
   in
   let v6 = (* "in" *) token env v6 in
-  let v7 = map_directly_assignable_expression env v7 in
+  let v7 = map_for_statement_collection env v7 in
   let v8 =
     (match v8 with
     | Some x -> R.Option (Some (
@@ -1913,6 +1913,18 @@ and map_for_statement (env : env) ((v1, v2, v3, v4, v5, v6, v7, v8, v9) : CST.fo
   in
   let v9 = map_function_body env v9 in
   R.Tuple [v1; v2; v3; v4; v5; v6; v7; v8; v9]
+
+and map_for_statement_collection (env : env) (x : CST.for_statement_collection) =
+  (match x with
+  | `Exp x -> R.Case ("Exp",
+      map_directly_assignable_expression env x
+    )
+  | `For_stmt_await (v1, v2) -> R.Case ("For_stmt_await",
+      let v1 = (* "await" *) token env v1 in
+      let v2 = map_directly_assignable_expression env v2 in
+      R.Tuple [v1; v2]
+    )
+  )
 
 and map_function_body (env : env) (x : CST.function_body) =
   map_block env x

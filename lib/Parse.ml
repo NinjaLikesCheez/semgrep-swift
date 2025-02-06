@@ -1518,12 +1518,26 @@ let children_regexps : (string * Run.exp option) list = [
         Token (Name "type_annotation");
       );
       Token (Literal "in");
-      Token (Name "expression");
+      Token (Name "for_statement_collection");
       Opt (
         Token (Name "where_clause");
       );
       Token (Name "block");
     ];
+  );
+  "for_statement_await",
+  Some (
+    Seq [
+      Token (Name "await_operator");
+      Token (Name "expression");
+    ];
+  );
+  "for_statement_collection",
+  Some (
+    Alt [|
+      Token (Name "expression");
+      Token (Name "for_statement_await");
+    |];
   );
   "function_body", Some (Token (Name "block"););
   "function_declaration",
@@ -6569,12 +6583,41 @@ and trans_for_statement ((kind, body) : mt) : CST.for_statement =
               v4
             ,
             Run.trans_token (Run.matcher_token v5),
-            trans_expression (Run.matcher_token v6),
+            trans_for_statement_collection (Run.matcher_token v6),
             Run.opt
               (fun v -> trans_where_clause (Run.matcher_token v))
               v7
             ,
             trans_block (Run.matcher_token v8)
+          )
+      | _ -> assert false
+      )
+  | Leaf _ -> assert false
+
+and trans_for_statement_await ((kind, body) : mt) : CST.for_statement_await =
+  match body with
+  | Children v ->
+      (match v with
+      | Seq [v0; v1] ->
+          (
+            trans_await_operator (Run.matcher_token v0),
+            trans_expression (Run.matcher_token v1)
+          )
+      | _ -> assert false
+      )
+  | Leaf _ -> assert false
+
+and trans_for_statement_collection ((kind, body) : mt) : CST.for_statement_collection =
+  match body with
+  | Children v ->
+      (match v with
+      | Alt (0, v) ->
+          `Exp (
+            trans_expression (Run.matcher_token v)
+          )
+      | Alt (1, v) ->
+          `For_stmt_await (
+            trans_for_statement_await (Run.matcher_token v)
           )
       | _ -> assert false
       )
