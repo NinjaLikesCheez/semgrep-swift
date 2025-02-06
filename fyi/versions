@@ -1,6 +1,6 @@
 File: semgrep-grammars/src/tree-sitter-swift/LICENSE
 Git repo name: tree-sitter-swift
-Latest commit in repo: 8a87eebcc3ca249e1eeb65b226e81b7e711eea7a
+Latest commit in repo: 972335417ecc25c6ee82cdb840a4d585308b45ac
 Last change in file:
   commit 90cd9604a7db32fbec45a040a7bdb6aaa89b565c
   gpg: Signature made Sat 14 Aug 18:10:20 2021 CEST
@@ -13,17 +13,18 @@ Last change in file:
 ---
 File: semgrep-grammars/src/tree-sitter-swift/grammar.js
 Git repo name: tree-sitter-swift
-Latest commit in repo: 8a87eebcc3ca249e1eeb65b226e81b7e711eea7a
+Latest commit in repo: 972335417ecc25c6ee82cdb840a4d585308b45ac
 Last change in file:
-  commit 8a87eebcc3ca249e1eeb65b226e81b7e711eea7a
+  commit 972335417ecc25c6ee82cdb840a4d585308b45ac
   Author: Alex Pinkus (Bot) <alex.pinkus@gmail.com>
-  Date:   Sat Mar 2 18:02:03 2024 -0800
+  Date:   Sun Mar 3 11:49:11 2024 -0800
   
-      Add explicit support for willSet/didSet blocks
+      Allow assignment to be split over multiple lines
       
-      The grammar was previously skating by by (erroneously) parsing `willSet`
-      and `didSet` blocks as computed properties and function calls (with
-      various combinations). This will usually _parse_ but is never _correct_.
+      Since this case used a literal "=" in the grammar, rather than an
+      `_equal_sign`, it did not indicate to the scanner that the `=` was an
+      allowed character. This prevented the scanner from suppressing
+      semicolons.
 ---
 File: semgrep-grammars/src/semgrep-swift/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep

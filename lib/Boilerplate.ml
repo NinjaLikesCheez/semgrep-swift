@@ -184,28 +184,6 @@ let map_pat_97d645c (env : env) (tok : CST.pat_97d645c) =
 let map_pat_888b548 (env : env) (tok : CST.pat_888b548) =
   (* pattern \{[0-9a-fA-F]+\} *) token env tok
 
-let map_assignment_and_operator (env : env) (x : CST.assignment_and_operator) =
-  (match x with
-  | `PLUSEQ tok -> R.Case ("PLUSEQ",
-      (* "+=" *) token env tok
-    )
-  | `DASHEQ tok -> R.Case ("DASHEQ",
-      (* "-=" *) token env tok
-    )
-  | `STAREQ tok -> R.Case ("STAREQ",
-      (* "*=" *) token env tok
-    )
-  | `SLASHEQ tok -> R.Case ("SLASHEQ",
-      (* "/=" *) token env tok
-    )
-  | `PERCEQ tok -> R.Case ("PERCEQ",
-      (* "%=" *) token env tok
-    )
-  | `EQ tok -> R.Case ("EQ",
-      (* "=" *) token env tok
-    )
-  )
-
 let map_async_keyword_custom (env : env) (tok : CST.async_keyword_custom) =
   (* async_keyword_custom *) token env tok
 
@@ -755,6 +733,28 @@ let map_regex_literal (env : env) (x : CST.regex_literal) =
 let map_bound_identifier (env : env) (x : CST.bound_identifier) =
   map_simple_identifier env x
 
+let map_assignment_and_operator (env : env) (x : CST.assignment_and_operator) =
+  (match x with
+  | `PLUSEQ tok -> R.Case ("PLUSEQ",
+      (* "+=" *) token env tok
+    )
+  | `DASHEQ tok -> R.Case ("DASHEQ",
+      (* "-=" *) token env tok
+    )
+  | `STAREQ tok -> R.Case ("STAREQ",
+      (* "*=" *) token env tok
+    )
+  | `SLASHEQ tok -> R.Case ("SLASHEQ",
+      (* "/=" *) token env tok
+    )
+  | `PERCEQ tok -> R.Case ("PERCEQ",
+      (* "%=" *) token env tok
+    )
+  | `Equal_sign tok -> R.Case ("Equal_sign",
+      (* eq_custom *) token env tok
+    )
+  )
+
 let map_prefix_unary_operator (env : env) (x : CST.prefix_unary_operator) =
   (match x with
   | `PLUSPLUS tok -> R.Case ("PLUSPLUS",
@@ -840,55 +840,6 @@ let map_getter_specifier (env : env) ((v1, v2, v3) : CST.getter_specifier) =
   in
   R.Tuple [v1; v2; v3]
 
-let map_referenceable_operator (env : env) (x : CST.referenceable_operator) =
-  (match x with
-  | `Custom_op x -> R.Case ("Custom_op",
-      map_custom_operator env x
-    )
-  | `Comp_op x -> R.Case ("Comp_op",
-      map_comparison_operator env x
-    )
-  | `Addi_op x -> R.Case ("Addi_op",
-      map_additive_operator env x
-    )
-  | `Mult_op x -> R.Case ("Mult_op",
-      map_multiplicative_operator env x
-    )
-  | `Equa_op x -> R.Case ("Equa_op",
-      map_equality_operator env x
-    )
-  | `Assign_and_op x -> R.Case ("Assign_and_op",
-      map_assignment_and_operator env x
-    )
-  | `PLUSPLUS tok -> R.Case ("PLUSPLUS",
-      (* "++" *) token env tok
-    )
-  | `DASHDASH tok -> R.Case ("DASHDASH",
-      (* "--" *) token env tok
-    )
-  | `Bang x -> R.Case ("Bang",
-      map_bang env x
-    )
-  | `TILDE tok -> R.Case ("TILDE",
-      (* "~" *) token env tok
-    )
-  | `BAR tok -> R.Case ("BAR",
-      (* "|" *) token env tok
-    )
-  | `HAT tok -> R.Case ("HAT",
-      (* "^" *) token env tok
-    )
-  | `LTLT tok -> R.Case ("LTLT",
-      (* "<<" *) token env tok
-    )
-  | `GTGT tok -> R.Case ("GTGT",
-      (* ">>" *) token env tok
-    )
-  | `AMP tok -> R.Case ("AMP",
-      (* "&" *) token env tok
-    )
-  )
-
 let map_identifier (env : env) ((v1, v2) : CST.identifier) =
   let v1 = map_bound_identifier env v1 in
   let v2 =
@@ -966,6 +917,55 @@ let map_tuple_type_item_identifier (env : env) ((v1, v2, v3) : CST.tuple_type_it
   let v3 = (* ":" *) token env v3 in
   R.Tuple [v1; v2; v3]
 
+let map_referenceable_operator (env : env) (x : CST.referenceable_operator) =
+  (match x with
+  | `Custom_op x -> R.Case ("Custom_op",
+      map_custom_operator env x
+    )
+  | `Comp_op x -> R.Case ("Comp_op",
+      map_comparison_operator env x
+    )
+  | `Addi_op x -> R.Case ("Addi_op",
+      map_additive_operator env x
+    )
+  | `Mult_op x -> R.Case ("Mult_op",
+      map_multiplicative_operator env x
+    )
+  | `Equa_op x -> R.Case ("Equa_op",
+      map_equality_operator env x
+    )
+  | `Assign_and_op x -> R.Case ("Assign_and_op",
+      map_assignment_and_operator env x
+    )
+  | `PLUSPLUS tok -> R.Case ("PLUSPLUS",
+      (* "++" *) token env tok
+    )
+  | `DASHDASH tok -> R.Case ("DASHDASH",
+      (* "--" *) token env tok
+    )
+  | `Bang x -> R.Case ("Bang",
+      map_bang env x
+    )
+  | `TILDE tok -> R.Case ("TILDE",
+      (* "~" *) token env tok
+    )
+  | `BAR tok -> R.Case ("BAR",
+      (* "|" *) token env tok
+    )
+  | `HAT tok -> R.Case ("HAT",
+      (* "^" *) token env tok
+    )
+  | `LTLT tok -> R.Case ("LTLT",
+      (* "<<" *) token env tok
+    )
+  | `GTGT tok -> R.Case ("GTGT",
+      (* ">>" *) token env tok
+    )
+  | `AMP tok -> R.Case ("AMP",
+      (* "&" *) token env tok
+    )
+  )
+
 let map_protocol_property_requirements (env : env) ((v1, v2, v3) : CST.protocol_property_requirements) =
   let v1 = (* "{" *) token env v1 in
   let v2 =
@@ -982,20 +982,6 @@ let map_protocol_property_requirements (env : env) ((v1, v2, v3) : CST.protocol_
   in
   let v3 = (* "}" *) token env v3 in
   R.Tuple [v1; v2; v3]
-
-let map_non_constructor_function_decl (env : env) ((v1, v2) : CST.non_constructor_function_decl) =
-  let v1 = (* "func" *) token env v1 in
-  let v2 =
-    (match v2 with
-    | `Simple_id x -> R.Case ("Simple_id",
-        map_bound_identifier env x
-      )
-    | `Refe_op x -> R.Case ("Refe_op",
-        map_referenceable_operator env x
-      )
-    )
-  in
-  R.Tuple [v1; v2]
 
 let map_availability_argument (env : env) (x : CST.availability_argument) =
   (match x with
@@ -1018,6 +1004,20 @@ let map_availability_argument (env : env) (x : CST.availability_argument) =
 
 let map_precedence_group_attributes (env : env) (xs : CST.precedence_group_attributes) =
   R.List (List.map (map_precedence_group_attribute env) xs)
+
+let map_non_constructor_function_decl (env : env) ((v1, v2) : CST.non_constructor_function_decl) =
+  let v1 = (* "func" *) token env v1 in
+  let v2 =
+    (match v2 with
+    | `Simple_id x -> R.Case ("Simple_id",
+        map_bound_identifier env x
+      )
+    | `Refe_op x -> R.Case ("Refe_op",
+        map_referenceable_operator env x
+      )
+    )
+  in
+  R.Tuple [v1; v2]
 
 let map_precedence_group_declaration (env : env) ((v1, v2, v3, v4, v5) : CST.precedence_group_declaration) =
   let v1 = (* "precedencegroup" *) token env v1 in

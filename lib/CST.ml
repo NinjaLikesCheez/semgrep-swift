@@ -91,15 +91,6 @@ type pat_97d645c = Token.t (* pattern `[^\r\n` ]*` *)
 
 type pat_888b548 = Token.t (* pattern \{[0-9a-fA-F]+\} *)
 
-type assignment_and_operator = [
-    `PLUSEQ of Token.t (* "+=" *)
-  | `DASHEQ of Token.t (* "-=" *)
-  | `STAREQ of Token.t (* "*=" *)
-  | `SLASHEQ of Token.t (* "/=" *)
-  | `PERCEQ of Token.t (* "%=" *)
-  | `EQ of Token.t (* "=" *)
-]
-
 type async_keyword_custom = Token.t
 
 type inheritance_modifier = [ `Final of Token.t (* "final" *) ]
@@ -359,6 +350,15 @@ type regex_literal = [
 
 type bound_identifier = simple_identifier
 
+type assignment_and_operator = [
+    `PLUSEQ of Token.t (* "+=" *)
+  | `DASHEQ of Token.t (* "-=" *)
+  | `STAREQ of Token.t (* "*=" *)
+  | `SLASHEQ of Token.t (* "/=" *)
+  | `PERCEQ of Token.t (* "%=" *)
+  | `Equal_sign of eq_custom (*tok*)
+]
+
 type prefix_unary_operator = [
     `PLUSPLUS of Token.t (* "++" *)
   | `DASHDASH of Token.t (* "--" *)
@@ -393,24 +393,6 @@ type getter_specifier = (
   * Token.t (* "get" *)
   * getter_effects option
 )
-
-type referenceable_operator = [
-    `Custom_op of custom_operator
-  | `Comp_op of comparison_operator
-  | `Addi_op of additive_operator
-  | `Mult_op of multiplicative_operator
-  | `Equa_op of equality_operator
-  | `Assign_and_op of assignment_and_operator
-  | `PLUSPLUS of Token.t (* "++" *)
-  | `DASHDASH of Token.t (* "--" *)
-  | `Bang of bang
-  | `TILDE of Token.t (* "~" *)
-  | `BAR of Token.t (* "|" *)
-  | `HAT of Token.t (* "^" *)
-  | `LTLT of Token.t (* "<<" *)
-  | `GTGT of Token.t (* ">>" *)
-  | `AMP of Token.t (* "&" *)
-]
 
 type identifier = (
     bound_identifier
@@ -447,16 +429,29 @@ type tuple_type_item_identifier = (
   * Token.t (* ":" *)
 )
 
+type referenceable_operator = [
+    `Custom_op of custom_operator
+  | `Comp_op of comparison_operator
+  | `Addi_op of additive_operator
+  | `Mult_op of multiplicative_operator
+  | `Equa_op of equality_operator
+  | `Assign_and_op of assignment_and_operator
+  | `PLUSPLUS of Token.t (* "++" *)
+  | `DASHDASH of Token.t (* "--" *)
+  | `Bang of bang
+  | `TILDE of Token.t (* "~" *)
+  | `BAR of Token.t (* "|" *)
+  | `HAT of Token.t (* "^" *)
+  | `LTLT of Token.t (* "<<" *)
+  | `GTGT of Token.t (* ">>" *)
+  | `AMP of Token.t (* "&" *)
+]
+
 type protocol_property_requirements = (
     Token.t (* "{" *)
   * [ `Getter_spec of getter_specifier | `Setter_spec of setter_specifier ]
       list (* zero or more *)
   * Token.t (* "}" *)
-)
-
-type non_constructor_function_decl = (
-    Token.t (* "func" *)
-  * [ `Simple_id of bound_identifier | `Refe_op of referenceable_operator ]
 )
 
 type availability_argument = [
@@ -470,6 +465,11 @@ type availability_argument = [
 
 type precedence_group_attributes =
   precedence_group_attribute list (* one or more *)
+
+type non_constructor_function_decl = (
+    Token.t (* "func" *)
+  * [ `Simple_id of bound_identifier | `Refe_op of referenceable_operator ]
+)
 
 type precedence_group_declaration = (
     Token.t (* "precedencegroup" *)

@@ -118,17 +118,6 @@ let children_regexps : (string * Run.exp option) list = [
   "comment", None;
   "pat_27d7db1", None;
   "plus_then_ws", None;
-  "assignment_and_operator",
-  Some (
-    Alt [|
-      Token (Literal "+=");
-      Token (Literal "-=");
-      Token (Literal "*=");
-      Token (Literal "/=");
-      Token (Literal "%=");
-      Token (Literal "=");
-    |];
-  );
   "statement_label", None;
   "async_keyword_custom", None;
   "inheritance_modifier",
@@ -541,6 +530,17 @@ let children_regexps : (string * Run.exp option) list = [
       Token (Name "uni_character_literal");
     |];
   );
+  "assignment_and_operator",
+  Some (
+    Alt [|
+      Token (Literal "+=");
+      Token (Literal "-=");
+      Token (Literal "*=");
+      Token (Literal "/=");
+      Token (Literal "%=");
+      Token (Name "equal_sign");
+    |];
+  );
   "prefix_unary_operator",
   Some (
     Alt [|
@@ -609,6 +609,21 @@ let children_regexps : (string * Run.exp option) list = [
       Token (Name "precedence_group_attribute");
     );
   );
+  "multi_line_string_content",
+  Some (
+    Alt [|
+      Token (Name "multi_line_str_text");
+      Token (Name "str_escaped_char");
+      Token (Literal "\"");
+    |];
+  );
+  "line_string_content",
+  Some (
+    Alt [|
+      Token (Name "line_str_text");
+      Token (Name "str_escaped_char");
+    |];
+  );
   "referenceable_operator",
   Some (
     Alt [|
@@ -627,21 +642,6 @@ let children_regexps : (string * Run.exp option) list = [
       Token (Literal "<<");
       Token (Literal ">>");
       Token (Literal "&");
-    |];
-  );
-  "multi_line_string_content",
-  Some (
-    Alt [|
-      Token (Name "multi_line_str_text");
-      Token (Name "str_escaped_char");
-      Token (Literal "\"");
-    |];
-  );
-  "line_string_content",
-  Some (
-    Alt [|
-      Token (Name "line_str_text");
-      Token (Name "str_escaped_char");
     |];
   );
   "availability_argument",
@@ -3498,38 +3498,6 @@ let trans_plus_then_ws ((kind, body) : mt) : CST.plus_then_ws =
   | Leaf v -> v
   | Children _ -> assert false
 
-let trans_assignment_and_operator ((kind, body) : mt) : CST.assignment_and_operator =
-  match body with
-  | Children v ->
-      (match v with
-      | Alt (0, v) ->
-          `PLUSEQ (
-            Run.trans_token (Run.matcher_token v)
-          )
-      | Alt (1, v) ->
-          `DASHEQ (
-            Run.trans_token (Run.matcher_token v)
-          )
-      | Alt (2, v) ->
-          `STAREQ (
-            Run.trans_token (Run.matcher_token v)
-          )
-      | Alt (3, v) ->
-          `SLASHEQ (
-            Run.trans_token (Run.matcher_token v)
-          )
-      | Alt (4, v) ->
-          `PERCEQ (
-            Run.trans_token (Run.matcher_token v)
-          )
-      | Alt (5, v) ->
-          `EQ (
-            Run.trans_token (Run.matcher_token v)
-          )
-      | _ -> assert false
-      )
-  | Leaf _ -> assert false
-
 let trans_statement_label ((kind, body) : mt) : CST.statement_label =
   match body with
   | Leaf v -> v
@@ -4613,6 +4581,38 @@ let trans_str_escaped_char ((kind, body) : mt) : CST.str_escaped_char =
   | Leaf _ -> assert false
 
 
+let trans_assignment_and_operator ((kind, body) : mt) : CST.assignment_and_operator =
+  match body with
+  | Children v ->
+      (match v with
+      | Alt (0, v) ->
+          `PLUSEQ (
+            Run.trans_token (Run.matcher_token v)
+          )
+      | Alt (1, v) ->
+          `DASHEQ (
+            Run.trans_token (Run.matcher_token v)
+          )
+      | Alt (2, v) ->
+          `STAREQ (
+            Run.trans_token (Run.matcher_token v)
+          )
+      | Alt (3, v) ->
+          `SLASHEQ (
+            Run.trans_token (Run.matcher_token v)
+          )
+      | Alt (4, v) ->
+          `PERCEQ (
+            Run.trans_token (Run.matcher_token v)
+          )
+      | Alt (5, v) ->
+          `Equal_sign (
+            trans_equal_sign (Run.matcher_token v)
+          )
+      | _ -> assert false
+      )
+  | Leaf _ -> assert false
+
 let trans_prefix_unary_operator ((kind, body) : mt) : CST.prefix_unary_operator =
   match body with
   | Children v ->
@@ -4770,6 +4770,42 @@ let trans_precedence_group_attributes ((kind, body) : mt) : CST.precedence_group
         v
   | Leaf _ -> assert false
 
+let trans_multi_line_string_content ((kind, body) : mt) : CST.multi_line_string_content =
+  match body with
+  | Children v ->
+      (match v with
+      | Alt (0, v) ->
+          `Multi_line_str_text (
+            trans_multi_line_str_text (Run.matcher_token v)
+          )
+      | Alt (1, v) ->
+          `Str_esca_char (
+            trans_str_escaped_char (Run.matcher_token v)
+          )
+      | Alt (2, v) ->
+          `DQUOT (
+            Run.trans_token (Run.matcher_token v)
+          )
+      | _ -> assert false
+      )
+  | Leaf _ -> assert false
+
+let trans_line_string_content ((kind, body) : mt) : CST.line_string_content =
+  match body with
+  | Children v ->
+      (match v with
+      | Alt (0, v) ->
+          `Line_str_text (
+            trans_line_str_text (Run.matcher_token v)
+          )
+      | Alt (1, v) ->
+          `Str_esca_char (
+            trans_str_escaped_char (Run.matcher_token v)
+          )
+      | _ -> assert false
+      )
+  | Leaf _ -> assert false
+
 let trans_referenceable_operator ((kind, body) : mt) : CST.referenceable_operator =
   match body with
   | Children v ->
@@ -4833,42 +4869,6 @@ let trans_referenceable_operator ((kind, body) : mt) : CST.referenceable_operato
       | Alt (14, v) ->
           `AMP (
             Run.trans_token (Run.matcher_token v)
-          )
-      | _ -> assert false
-      )
-  | Leaf _ -> assert false
-
-let trans_multi_line_string_content ((kind, body) : mt) : CST.multi_line_string_content =
-  match body with
-  | Children v ->
-      (match v with
-      | Alt (0, v) ->
-          `Multi_line_str_text (
-            trans_multi_line_str_text (Run.matcher_token v)
-          )
-      | Alt (1, v) ->
-          `Str_esca_char (
-            trans_str_escaped_char (Run.matcher_token v)
-          )
-      | Alt (2, v) ->
-          `DQUOT (
-            Run.trans_token (Run.matcher_token v)
-          )
-      | _ -> assert false
-      )
-  | Leaf _ -> assert false
-
-let trans_line_string_content ((kind, body) : mt) : CST.line_string_content =
-  match body with
-  | Children v ->
-      (match v with
-      | Alt (0, v) ->
-          `Line_str_text (
-            trans_line_str_text (Run.matcher_token v)
-          )
-      | Alt (1, v) ->
-          `Str_esca_char (
-            trans_str_escaped_char (Run.matcher_token v)
           )
       | _ -> assert false
       )
