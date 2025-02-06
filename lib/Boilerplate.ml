@@ -1390,10 +1390,8 @@ and map_capture_list_item (env : env) (x : CST.capture_list_item) =
       let v2 = map_bound_identifier env v2 in
       let v3 =
         (match v3 with
-        | Some (v1, v2) -> R.Option (Some (
-            let v1 = (* eq_custom *) token env v1 in
-            let v2 = map_directly_assignable_expression env v2 in
-            R.Tuple [v1; v2]
+        | Some x -> R.Option (Some (
+            map_expression_without_willset_didset env x
           ))
         | None -> R.Option None)
       in
@@ -1626,6 +1624,28 @@ and map_dictionary_type (env : env) ((v1, v2, v3, v4, v5) : CST.dictionary_type)
   let v5 = (* "]" *) token env v5 in
   R.Tuple [v1; v2; v3; v4; v5]
 
+and map_didset_clause (env : env) ((v1, v2, v3, v4) : CST.didset_clause) =
+  let v1 =
+    (match v1 with
+    | Some x -> R.Option (Some (
+        map_modifiers env x
+      ))
+    | None -> R.Option None)
+  in
+  let v2 = (* "didSet" *) token env v2 in
+  let v3 =
+    (match v3 with
+    | Some (v1, v2, v3) -> R.Option (Some (
+        let v1 = (* "(" *) token env v1 in
+        let v2 = map_bound_identifier env v2 in
+        let v3 = (* ")" *) token env v3 in
+        R.Tuple [v1; v2; v3]
+      ))
+    | None -> R.Option None)
+  in
+  let v4 = map_function_body env v4 in
+  R.Tuple [v1; v2; v3; v4]
+
 and map_direct_or_indirect_binding (env : env) ((v1, v2) : CST.direct_or_indirect_binding) =
   let v1 =
     (match v1 with
@@ -1748,10 +1768,8 @@ and map_enum_entry_suffix (env : env) (x : CST.enum_entry_suffix) =
             let v2 = map_type_ env v2 in
             let v3 =
               (match v3 with
-              | Some (v1, v2) -> R.Option (Some (
-                  let v1 = (* eq_custom *) token env v1 in
-                  let v2 = map_directly_assignable_expression env v2 in
-                  R.Tuple [v1; v2]
+              | Some x -> R.Option (Some (
+                  map_expression_without_willset_didset env x
                 ))
               | None -> R.Option None)
             in
@@ -1768,10 +1786,8 @@ and map_enum_entry_suffix (env : env) (x : CST.enum_entry_suffix) =
                 let v3 = map_type_ env v3 in
                 let v4 =
                   (match v4 with
-                  | Some (v1, v2) -> R.Option (Some (
-                      let v1 = (* eq_custom *) token env v1 in
-                      let v2 = map_directly_assignable_expression env v2 in
-                      R.Tuple [v1; v2]
+                  | Some x -> R.Option (Some (
+                      map_expression_without_willset_didset env x
                     ))
                   | None -> R.Option None)
                 in
@@ -1785,10 +1801,8 @@ and map_enum_entry_suffix (env : env) (x : CST.enum_entry_suffix) =
       let v3 = (* ")" *) token env v3 in
       R.Tuple [v1; v2; v3]
     )
-  | `Equal_sign_exp (v1, v2) -> R.Case ("Equal_sign_exp",
-      let v1 = (* eq_custom *) token env v1 in
-      let v2 = map_directly_assignable_expression env v2 in
-      R.Tuple [v1; v2]
+  | `Equal_sign_exp x -> R.Case ("Equal_sign_exp",
+      map_expression_without_willset_didset env x
     )
   )
 
@@ -1865,6 +1879,17 @@ and map_expression (env : env) (x : CST.expression) =
       R.Tuple [v1; v2; v3]
     )
   )
+
+and map_expression_with_willset_didset (env : env) ((v1, v2, v3) : CST.expression_with_willset_didset) =
+  let v1 = (* eq_custom *) token env v1 in
+  let v2 = map_directly_assignable_expression env v2 in
+  let v3 = map_willset_didset_block env v3 in
+  R.Tuple [v1; v2; v3]
+
+and map_expression_without_willset_didset (env : env) ((v1, v2) : CST.expression_without_willset_didset) =
+  let v1 = (* eq_custom *) token env v1 in
+  let v2 = map_directly_assignable_expression env v2 in
+  R.Tuple [v1; v2]
 
 and map_fn_call_lambda_arguments (env : env) ((v1, v2) : CST.fn_call_lambda_arguments) =
   let v1 = map_lambda_literal env v1 in
@@ -1974,10 +1999,8 @@ and map_function_value_parameter (env : env) ((v1, v2, v3) : CST.function_value_
   let v2 = map_parameter env v2 in
   let v3 =
     (match v3 with
-    | Some (v1, v2) -> R.Option (Some (
-        let v1 = (* eq_custom *) token env v1 in
-        let v2 = map_directly_assignable_expression env v2 in
-        R.Tuple [v1; v2]
+    | Some x -> R.Option (Some (
+        map_expression_without_willset_didset env x
       ))
     | None -> R.Option None)
   in
@@ -2025,10 +2048,8 @@ and map_if_condition_sequence_item (env : env) (x : CST.if_condition_sequence_it
       let v1 = map_direct_or_indirect_binding env v1 in
       let v2 =
         (match v2 with
-        | Some (v1, v2) -> R.Option (Some (
-            let v1 = (* eq_custom *) token env v1 in
-            let v2 = map_directly_assignable_expression env v2 in
-            R.Tuple [v1; v2]
+        | Some x -> R.Option (Some (
+            map_expression_without_willset_didset env x
           ))
         | None -> R.Option None)
       in
@@ -3192,10 +3213,14 @@ and map_single_modifierless_property_declaration (env : env) ((v1, v2, v3, v4) :
     (match v4 with
     | Some x -> R.Option (Some (
         (match x with
-        | `Equal_sign_exp (v1, v2) -> R.Case ("Equal_sign_exp",
-            let v1 = (* eq_custom *) token env v1 in
-            let v2 = map_directly_assignable_expression env v2 in
-            R.Tuple [v1; v2]
+        | `Exp_with_will_didset_6031240 x -> R.Case ("Exp_with_will_didset_6031240",
+            map_expression_with_willset_didset env x
+          )
+        | `Exp_with_will_didset_3bae343 x -> R.Case ("Exp_with_will_didset_3bae343",
+            map_expression_without_willset_didset env x
+          )
+        | `Will_didset_blk x -> R.Case ("Will_didset_blk",
+            map_willset_didset_block env x
           )
         | `Comp_prop x -> R.Case ("Comp_prop",
             map_computed_property env x
@@ -3953,6 +3978,58 @@ and map_while_statement (env : env) ((v1, v2, v3, v4, v5, v6) : CST.while_statem
   in
   let v6 = (* "}" *) token env v6 in
   R.Tuple [v1; v2; v3; v4; v5; v6]
+
+and map_willset_clause (env : env) ((v1, v2, v3, v4) : CST.willset_clause) =
+  let v1 =
+    (match v1 with
+    | Some x -> R.Option (Some (
+        map_modifiers env x
+      ))
+    | None -> R.Option None)
+  in
+  let v2 = (* "willSet" *) token env v2 in
+  let v3 =
+    (match v3 with
+    | Some (v1, v2, v3) -> R.Option (Some (
+        let v1 = (* "(" *) token env v1 in
+        let v2 = map_bound_identifier env v2 in
+        let v3 = (* ")" *) token env v3 in
+        R.Tuple [v1; v2; v3]
+      ))
+    | None -> R.Option None)
+  in
+  let v4 = map_function_body env v4 in
+  R.Tuple [v1; v2; v3; v4]
+
+and map_willset_didset_block (env : env) (x : CST.willset_didset_block) =
+  (match x with
+  | `LCURL_will_clause_opt_didset_clause_RCURL (v1, v2, v3, v4) -> R.Case ("LCURL_will_clause_opt_didset_clause_RCURL",
+      let v1 = (* "{" *) token env v1 in
+      let v2 = map_willset_clause env v2 in
+      let v3 =
+        (match v3 with
+        | Some x -> R.Option (Some (
+            map_didset_clause env x
+          ))
+        | None -> R.Option None)
+      in
+      let v4 = (* "}" *) token env v4 in
+      R.Tuple [v1; v2; v3; v4]
+    )
+  | `LCURL_didset_clause_opt_will_clause_RCURL (v1, v2, v3, v4) -> R.Case ("LCURL_didset_clause_opt_will_clause_RCURL",
+      let v1 = (* "{" *) token env v1 in
+      let v2 = map_didset_clause env v2 in
+      let v3 =
+        (match v3 with
+        | Some x -> R.Option (Some (
+            map_willset_clause env x
+          ))
+        | None -> R.Option None)
+      in
+      let v4 = (* "}" *) token env v4 in
+      R.Tuple [v1; v2; v3; v4]
+    )
+  )
 
 let map_external_macro_definition (env : env) ((v1, v2) : CST.external_macro_definition) =
   let v1 = (* "#externalMacro" *) token env v1 in

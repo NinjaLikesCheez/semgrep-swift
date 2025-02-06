@@ -643,7 +643,7 @@ and capture_list_item = [
   | `Opt_owne_modi_simple_id_opt_equal_sign_exp of (
         ownership_modifier option
       * bound_identifier
-      * (eq_custom (*tok*) * directly_assignable_expression) option
+      * expression_without_willset_didset option
     )
 ]
 
@@ -746,6 +746,13 @@ and dictionary_type = (
     Token.t (* "[" *) * type_ * Token.t (* ":" *) * type_ * Token.t (* "]" *)
 )
 
+and didset_clause = (
+    modifiers option
+  * Token.t (* "didSet" *)
+  * (Token.t (* "(" *) * bound_identifier * Token.t (* ")" *)) option
+  * function_body
+)
+
 and direct_or_indirect_binding = (
     [
         `Bind_kind_and_pat of binding_kind_and_pattern
@@ -793,19 +800,19 @@ and enum_entry_suffix = [
       * (
             tuple_type_item_identifier option
           * type_
-          * (eq_custom (*tok*) * directly_assignable_expression) option
+          * expression_without_willset_didset option
           * (
                 Token.t (* "," *)
               * tuple_type_item_identifier option
               * type_
-              * (eq_custom (*tok*) * directly_assignable_expression) option
+              * expression_without_willset_didset option
             )
               list (* zero or more *)
         )
           option
       * Token.t (* ")" *)
     )
-  | `Equal_sign_exp of (eq_custom (*tok*) * directly_assignable_expression)
+  | `Equal_sign_exp of expression_without_willset_didset
 ]
 
 and existential_type = (Token.t (* "any" *) * unannotated_type)
@@ -842,6 +849,14 @@ and expression = [
       * custom_operator
     )
 ]
+
+and expression_with_willset_didset = (
+    eq_custom (*tok*) * directly_assignable_expression * willset_didset_block
+)
+
+and expression_without_willset_didset = (
+    eq_custom (*tok*) * directly_assignable_expression
+)
 
 and fn_call_lambda_arguments = (
     lambda_literal
@@ -883,7 +898,7 @@ and function_type = (
 and function_value_parameter = (
     attribute option
   * parameter
-  * (eq_custom (*tok*) * directly_assignable_expression) option
+  * expression_without_willset_didset option
 )
 
 and function_value_parameters =
@@ -910,7 +925,7 @@ and guard_statement = (
 and if_condition_sequence_item = [
     `If_let_bind of (
         direct_or_indirect_binding
-      * (eq_custom (*tok*) * directly_assignable_expression) option
+      * expression_without_willset_didset option
       * where_clause option
     )
   | `Exp of directly_assignable_expression
@@ -1361,9 +1376,9 @@ and single_modifierless_property_declaration = (
   * type_annotation option
   * type_constraints option
   * [
-        `Equal_sign_exp of (
-            eq_custom (*tok*) * directly_assignable_expression
-        )
+        `Exp_with_will_didset_6031240 of expression_with_willset_didset
+      | `Exp_with_will_didset_3bae343 of expression_without_willset_didset
+      | `Will_didset_blk of willset_didset_block
       | `Comp_prop of computed_property
     ]
       option
@@ -1698,6 +1713,28 @@ and while_statement = (
   * Token.t (* "}" *)
 )
 
+and willset_clause = (
+    modifiers option
+  * Token.t (* "willSet" *)
+  * (Token.t (* "(" *) * bound_identifier * Token.t (* ")" *)) option
+  * function_body
+)
+
+and willset_didset_block = [
+    `LCURL_will_clause_opt_didset_clause_RCURL of (
+        Token.t (* "{" *)
+      * willset_clause
+      * didset_clause option
+      * Token.t (* "}" *)
+    )
+  | `LCURL_didset_clause_opt_will_clause_RCURL of (
+        Token.t (* "{" *)
+      * didset_clause
+      * willset_clause option
+      * Token.t (* "}" *)
+    )
+]
+
 type external_macro_definition = (
     Token.t (* "#externalMacro" *) * expr_hack_at_ternary_binary_call_suffix
 )
@@ -1952,12 +1989,12 @@ type enum_type_parameters (* inlined *) = (
   * (
         tuple_type_item_identifier option
       * type_
-      * (eq_custom (*tok*) * directly_assignable_expression) option
+      * expression_without_willset_didset option
       * (
             Token.t (* "," *)
           * tuple_type_item_identifier option
           * type_
-          * (eq_custom (*tok*) * directly_assignable_expression) option
+          * expression_without_willset_didset option
         )
           list (* zero or more *)
     )
@@ -1987,7 +2024,7 @@ type for_statement_await (* inlined *) = (
 
 type if_let_binding (* inlined *) = (
     direct_or_indirect_binding
-  * (eq_custom (*tok*) * directly_assignable_expression) option
+  * expression_without_willset_didset option
   * where_clause option
 )
 

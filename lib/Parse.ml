@@ -1277,6 +1277,23 @@ let children_regexps : (string * Run.exp option) list = [
       Token (Literal "]");
     ];
   );
+  "didset_clause",
+  Some (
+    Seq [
+      Opt (
+        Token (Name "modifiers");
+      );
+      Token (Literal "didSet");
+      Opt (
+        Seq [
+          Token (Literal "(");
+          Token (Name "simple_identifier");
+          Token (Literal ")");
+        ];
+      );
+      Token (Name "block");
+    ];
+  );
   "direct_or_indirect_binding",
   Some (
     Seq [
@@ -1489,6 +1506,21 @@ let children_regexps : (string * Run.exp option) list = [
       Token (Name "semgrep_ellipsis_metavar");
       Token (Name "semgrep_deep_ellipsis");
     |];
+  );
+  "expression_with_willset_didset",
+  Some (
+    Seq [
+      Token (Name "equal_sign");
+      Token (Name "expression");
+      Token (Name "willset_didset_block");
+    ];
+  );
+  "expression_without_willset_didset",
+  Some (
+    Seq [
+      Token (Name "equal_sign");
+      Token (Name "expression");
+    ];
   );
   "fn_call_lambda_arguments",
   Some (
@@ -2555,10 +2587,9 @@ let children_regexps : (string * Run.exp option) list = [
       );
       Opt (
         Alt [|
-          Seq [
-            Token (Name "equal_sign");
-            Token (Name "expression");
-          ];
+          Token (Name "expression_with_willset_didset");
+          Token (Name "expression_without_willset_didset");
+          Token (Name "willset_didset_block");
           Token (Name "computed_property");
         |];
       );
@@ -3046,6 +3077,44 @@ let children_regexps : (string * Run.exp option) list = [
       );
       Token (Literal "}");
     ];
+  );
+  "willset_clause",
+  Some (
+    Seq [
+      Opt (
+        Token (Name "modifiers");
+      );
+      Token (Literal "willSet");
+      Opt (
+        Seq [
+          Token (Literal "(");
+          Token (Name "simple_identifier");
+          Token (Literal ")");
+        ];
+      );
+      Token (Name "block");
+    ];
+  );
+  "willset_didset_block",
+  Some (
+    Alt [|
+      Seq [
+        Token (Literal "{");
+        Token (Name "willset_clause");
+        Opt (
+          Token (Name "didset_clause");
+        );
+        Token (Literal "}");
+      ];
+      Seq [
+        Token (Literal "{");
+        Token (Name "didset_clause");
+        Opt (
+          Token (Name "willset_clause");
+        );
+        Token (Literal "}");
+      ];
+    |];
   );
   "external_macro_definition",
   Some (
@@ -6096,6 +6165,37 @@ and trans_dictionary_type ((kind, body) : mt) : CST.dictionary_type =
       )
   | Leaf _ -> assert false
 
+and trans_didset_clause ((kind, body) : mt) : CST.didset_clause =
+  match body with
+  | Children v ->
+      (match v with
+      | Seq [v0; v1; v2; v3] ->
+          (
+            Run.opt
+              (fun v -> trans_modifiers (Run.matcher_token v))
+              v0
+            ,
+            Run.trans_token (Run.matcher_token v1),
+            Run.opt
+              (fun v ->
+                (match v with
+                | Seq [v0; v1; v2] ->
+                    (
+                      Run.trans_token (Run.matcher_token v0),
+                      trans_simple_identifier (Run.matcher_token v1),
+                      Run.trans_token (Run.matcher_token v2)
+                    )
+                | _ -> assert false
+                )
+              )
+              v2
+            ,
+            trans_block (Run.matcher_token v3)
+          )
+      | _ -> assert false
+      )
+  | Leaf _ -> assert false
+
 and trans_direct_or_indirect_binding ((kind, body) : mt) : CST.direct_or_indirect_binding =
   match body with
   | Children v ->
@@ -6532,6 +6632,33 @@ and trans_expression ((kind, body) : mt) : CST.expression =
       | Alt (3, v) ->
           `Semg_deep_ellips (
             trans_semgrep_deep_ellipsis (Run.matcher_token v)
+          )
+      | _ -> assert false
+      )
+  | Leaf _ -> assert false
+
+and trans_expression_with_willset_didset ((kind, body) : mt) : CST.expression_with_willset_didset =
+  match body with
+  | Children v ->
+      (match v with
+      | Seq [v0; v1; v2] ->
+          (
+            trans_equal_sign (Run.matcher_token v0),
+            trans_expression (Run.matcher_token v1),
+            trans_willset_didset_block (Run.matcher_token v2)
+          )
+      | _ -> assert false
+      )
+  | Leaf _ -> assert false
+
+and trans_expression_without_willset_didset ((kind, body) : mt) : CST.expression_without_willset_didset =
+  match body with
+  | Children v ->
+      (match v with
+      | Seq [v0; v1] ->
+          (
+            trans_equal_sign (Run.matcher_token v0),
+            trans_expression (Run.matcher_token v1)
           )
       | _ -> assert false
       )
@@ -8731,17 +8858,18 @@ and trans_single_modifierless_property_declaration ((kind, body) : mt) : CST.sin
               (fun v ->
                 (match v with
                 | Alt (0, v) ->
-                    `Equal_sign_exp (
-                      (match v with
-                      | Seq [v0; v1] ->
-                          (
-                            trans_equal_sign (Run.matcher_token v0),
-                            trans_expression (Run.matcher_token v1)
-                          )
-                      | _ -> assert false
-                      )
+                    `Exp_with_will_didset_6031240 (
+                      trans_expression_with_willset_didset (Run.matcher_token v)
                     )
                 | Alt (1, v) ->
+                    `Exp_with_will_didset_3bae343 (
+                      trans_expression_without_willset_didset (Run.matcher_token v)
+                    )
+                | Alt (2, v) ->
+                    `Will_didset_blk (
+                      trans_willset_didset_block (Run.matcher_token v)
+                    )
+                | Alt (3, v) ->
                     `Comp_prop (
                       trans_computed_property (Run.matcher_token v)
                     )
@@ -9776,6 +9904,77 @@ and trans_while_statement ((kind, body) : mt) : CST.while_statement =
               v4
             ,
             Run.trans_token (Run.matcher_token v5)
+          )
+      | _ -> assert false
+      )
+  | Leaf _ -> assert false
+
+and trans_willset_clause ((kind, body) : mt) : CST.willset_clause =
+  match body with
+  | Children v ->
+      (match v with
+      | Seq [v0; v1; v2; v3] ->
+          (
+            Run.opt
+              (fun v -> trans_modifiers (Run.matcher_token v))
+              v0
+            ,
+            Run.trans_token (Run.matcher_token v1),
+            Run.opt
+              (fun v ->
+                (match v with
+                | Seq [v0; v1; v2] ->
+                    (
+                      Run.trans_token (Run.matcher_token v0),
+                      trans_simple_identifier (Run.matcher_token v1),
+                      Run.trans_token (Run.matcher_token v2)
+                    )
+                | _ -> assert false
+                )
+              )
+              v2
+            ,
+            trans_block (Run.matcher_token v3)
+          )
+      | _ -> assert false
+      )
+  | Leaf _ -> assert false
+
+and trans_willset_didset_block ((kind, body) : mt) : CST.willset_didset_block =
+  match body with
+  | Children v ->
+      (match v with
+      | Alt (0, v) ->
+          `LCURL_will_clause_opt_didset_clause_RCURL (
+            (match v with
+            | Seq [v0; v1; v2; v3] ->
+                (
+                  Run.trans_token (Run.matcher_token v0),
+                  trans_willset_clause (Run.matcher_token v1),
+                  Run.opt
+                    (fun v -> trans_didset_clause (Run.matcher_token v))
+                    v2
+                  ,
+                  Run.trans_token (Run.matcher_token v3)
+                )
+            | _ -> assert false
+            )
+          )
+      | Alt (1, v) ->
+          `LCURL_didset_clause_opt_will_clause_RCURL (
+            (match v with
+            | Seq [v0; v1; v2; v3] ->
+                (
+                  Run.trans_token (Run.matcher_token v0),
+                  trans_didset_clause (Run.matcher_token v1),
+                  Run.opt
+                    (fun v -> trans_willset_clause (Run.matcher_token v))
+                    v2
+                  ,
+                  Run.trans_token (Run.matcher_token v3)
+                )
+            | _ -> assert false
+            )
           )
       | _ -> assert false
       )
