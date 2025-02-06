@@ -2771,21 +2771,24 @@ let children_regexps : (string * Run.exp option) list = [
   );
   "tuple_type",
   Some (
-    Seq [
-      Token (Literal "(");
-      Opt (
-        Seq [
-          Token (Name "tuple_type_item");
-          Repeat (
-            Seq [
-              Token (Literal ",");
-              Token (Name "tuple_type_item");
-            ];
-          );
-        ];
-      );
-      Token (Literal ")");
-    ];
+    Alt [|
+      Seq [
+        Token (Literal "(");
+        Opt (
+          Seq [
+            Token (Name "tuple_type_item");
+            Repeat (
+              Seq [
+                Token (Literal ",");
+                Token (Name "tuple_type_item");
+              ];
+            );
+          ];
+        );
+        Token (Literal ")");
+      ];
+      Token (Name "parenthesized_type");
+    |];
   );
   "tuple_type_item",
   Some (
@@ -9226,34 +9229,44 @@ and trans_tuple_type ((kind, body) : mt) : CST.tuple_type =
   match body with
   | Children v ->
       (match v with
-      | Seq [v0; v1; v2] ->
-          (
-            Run.trans_token (Run.matcher_token v0),
-            Run.opt
-              (fun v ->
-                (match v with
-                | Seq [v0; v1] ->
-                    (
-                      trans_tuple_type_item (Run.matcher_token v0),
-                      Run.repeat
-                        (fun v ->
-                          (match v with
-                          | Seq [v0; v1] ->
-                              (
-                                Run.trans_token (Run.matcher_token v0),
-                                trans_tuple_type_item (Run.matcher_token v1)
+      | Alt (0, v) ->
+          `LPAR_opt_tuple_type_item_rep_COMMA_tuple_type_item_RPAR (
+            (match v with
+            | Seq [v0; v1; v2] ->
+                (
+                  Run.trans_token (Run.matcher_token v0),
+                  Run.opt
+                    (fun v ->
+                      (match v with
+                      | Seq [v0; v1] ->
+                          (
+                            trans_tuple_type_item (Run.matcher_token v0),
+                            Run.repeat
+                              (fun v ->
+                                (match v with
+                                | Seq [v0; v1] ->
+                                    (
+                                      Run.trans_token (Run.matcher_token v0),
+                                      trans_tuple_type_item (Run.matcher_token v1)
+                                    )
+                                | _ -> assert false
+                                )
                               )
-                          | _ -> assert false
+                              v1
                           )
-                        )
-                        v1
+                      | _ -> assert false
+                      )
                     )
-                | _ -> assert false
+                    v1
+                  ,
+                  Run.trans_token (Run.matcher_token v2)
                 )
-              )
-              v1
-            ,
-            Run.trans_token (Run.matcher_token v2)
+            | _ -> assert false
+            )
+          )
+      | Alt (1, v) ->
+          `Paren_type (
+            trans_parenthesized_type (Run.matcher_token v)
           )
       | _ -> assert false
       )

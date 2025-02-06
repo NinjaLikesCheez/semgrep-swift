@@ -3436,25 +3436,32 @@ and map_tuple_pattern_item (env : env) (x : CST.tuple_pattern_item) =
     )
   )
 
-and map_tuple_type (env : env) ((v1, v2, v3) : CST.tuple_type) =
-  let v1 = (* "(" *) token env v1 in
-  let v2 =
-    (match v2 with
-    | Some (v1, v2) -> R.Option (Some (
-        let v1 = map_tuple_type_item env v1 in
-        let v2 =
-          R.List (List.map (fun (v1, v2) ->
-            let v1 = (* "," *) token env v1 in
-            let v2 = map_tuple_type_item env v2 in
+and map_tuple_type (env : env) (x : CST.tuple_type) =
+  (match x with
+  | `LPAR_opt_tuple_type_item_rep_COMMA_tuple_type_item_RPAR (v1, v2, v3) -> R.Case ("LPAR_opt_tuple_type_item_rep_COMMA_tuple_type_item_RPAR",
+      let v1 = (* "(" *) token env v1 in
+      let v2 =
+        (match v2 with
+        | Some (v1, v2) -> R.Option (Some (
+            let v1 = map_tuple_type_item env v1 in
+            let v2 =
+              R.List (List.map (fun (v1, v2) ->
+                let v1 = (* "," *) token env v1 in
+                let v2 = map_tuple_type_item env v2 in
+                R.Tuple [v1; v2]
+              ) v2)
+            in
             R.Tuple [v1; v2]
-          ) v2)
-        in
-        R.Tuple [v1; v2]
-      ))
-    | None -> R.Option None)
-  in
-  let v3 = (* ")" *) token env v3 in
-  R.Tuple [v1; v2; v3]
+          ))
+        | None -> R.Option None)
+      in
+      let v3 = (* ")" *) token env v3 in
+      R.Tuple [v1; v2; v3]
+    )
+  | `Paren_type x -> R.Case ("Paren_type",
+      map_parenthesized_type env x
+    )
+  )
 
 and map_tuple_type_item (env : env) ((v1, v2, v3) : CST.tuple_type_item) =
   let v1 =

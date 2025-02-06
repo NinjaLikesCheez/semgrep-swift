@@ -1481,15 +1481,18 @@ and tuple_pattern_item = [
   | `Bind_pat_with_expr of switch_pattern
 ]
 
-and tuple_type = (
-    Token.t (* "(" *)
-  * (
-        tuple_type_item
-      * (Token.t (* "," *) * tuple_type_item) list (* zero or more *)
+and tuple_type = [
+    `LPAR_opt_tuple_type_item_rep_COMMA_tuple_type_item_RPAR of (
+        Token.t (* "(" *)
+      * (
+            tuple_type_item
+          * (Token.t (* "," *) * tuple_type_item) list (* zero or more *)
+        )
+          option
+      * Token.t (* ")" *)
     )
-      option
-  * Token.t (* ")" *)
-)
+  | `Paren_type of parenthesized_type
+]
 
 and tuple_type_item = (
     tuple_type_item_identifier option
