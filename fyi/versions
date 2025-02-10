@@ -1,6 +1,6 @@
 File: semgrep-grammars/src/tree-sitter-swift/LICENSE
 Git repo name: tree-sitter-swift
-Latest commit in repo: 9d273213490efd200785e9b72e78de91bc4e1010
+Latest commit in repo: 4b5c54bb676c0044dd0e41ef860dc22430579134
 Last change in file:
   commit 90cd9604a7db32fbec45a040a7bdb6aaa89b565c
   gpg: Signature made Sat 14 Aug 18:10:20 2021 CEST
@@ -13,26 +13,16 @@ Last change in file:
 ---
 File: semgrep-grammars/src/tree-sitter-swift/grammar.js
 Git repo name: tree-sitter-swift
-Latest commit in repo: 9d273213490efd200785e9b72e78de91bc4e1010
+Latest commit in repo: 4b5c54bb676c0044dd0e41ef860dc22430579134
 Last change in file:
-  commit 9d273213490efd200785e9b72e78de91bc4e1010
+  commit 4b5c54bb676c0044dd0e41ef860dc22430579134
   Author: Alex Pinkus (Bot) <alex.pinkus@gmail.com>
-  Date:   Sun Mar 3 13:23:09 2024 -0800
+  Date:   Sun Mar 3 15:12:04 2024 -0800
   
-      Bring back support for optional types in constructors
+      Add borrowing and consuming as keywords
       
-      In #353, adding `_parenthesized_type` caused new parse failures where
-      the parser now resolved away from `tuple_type` too early. Specifically,
-      when parsing an expression like `[(any Foo) ...`, the `tuple_type`
-      interpretation must still be valid at that point in the expression in
-      case we're about to see a `?`.
-      
-      The truly robust thing to do would be to support `$.tuple_type` as the
-      target of the navigation expression. However, this leads to a large
-      number of additional parse failures, as seen in #360. To avoid all of
-      that, we add support in the opposite direction: allow `tuple_type` to be
-      resolved using `_parenthesized_type`, so that the parser seeing the
-      latter does not cause it to invalidate the former.
+      See
+      [SE-0377](https://github.com/apple/swift-evolution/blob/main/proposals/0377-parameter-ownership-modifiers.md].
 ---
 File: semgrep-grammars/src/semgrep-swift/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
