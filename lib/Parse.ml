@@ -178,6 +178,7 @@ let children_regexps : (string * Run.exp option) list = [
       Token (Literal "dynamic");
       Token (Literal "optional");
       Token (Literal "class");
+      Token (Literal "distributed");
     |];
   );
   "three_dot_operator", None;
@@ -3731,6 +3732,10 @@ let trans_property_modifier ((kind, body) : mt) : CST.property_modifier =
           )
       | Alt (3, v) ->
           `Class (
+            Run.trans_token (Run.matcher_token v)
+          )
+      | Alt (4, v) ->
+          `Dist (
             Run.trans_token (Run.matcher_token v)
           )
       | _ -> assert false

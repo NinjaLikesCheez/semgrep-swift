@@ -285,6 +285,9 @@ let map_property_modifier (env : env) (x : CST.property_modifier) =
   | `Class tok -> R.Case ("Class",
       (* "class" *) token env tok
     )
+  | `Dist tok -> R.Case ("Dist",
+      (* "distributed" *) token env tok
+    )
   )
 
 let map_rethrows_keyword (env : env) (tok : CST.rethrows_keyword) =

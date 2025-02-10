@@ -148,6 +148,7 @@ type property_modifier = [
   | `Dyna of Token.t (* "dynamic" *)
   | `Opt of Token.t (* "optional" *)
   | `Class of Token.t (* "class" *)
+  | `Dist of Token.t (* "distributed" *)
 ]
 
 type rethrows_keyword = Token.t

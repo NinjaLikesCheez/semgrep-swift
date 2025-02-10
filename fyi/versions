@@ -1,6 +1,6 @@
 File: semgrep-grammars/src/tree-sitter-swift/LICENSE
 Git repo name: tree-sitter-swift
-Latest commit in repo: 20136da447ee3291af121a5f38fd8aea60d0e68e
+Latest commit in repo: 3dad34414937a2f3295a6f43f61c0538f2ad0257
 Last change in file:
   commit 90cd9604a7db32fbec45a040a7bdb6aaa89b565c
   gpg: Signature made Sat 14 Aug 18:10:20 2021 CEST
@@ -13,13 +13,17 @@ Last change in file:
 ---
 File: semgrep-grammars/src/tree-sitter-swift/grammar.js
 Git repo name: tree-sitter-swift
-Latest commit in repo: 20136da447ee3291af121a5f38fd8aea60d0e68e
+Latest commit in repo: 3dad34414937a2f3295a6f43f61c0538f2ad0257
 Last change in file:
-  commit 20136da447ee3291af121a5f38fd8aea60d0e68e
-  Author: Alex Pinkus (Bot) <alex.pinkus@gmail.com>
-  Date:   Sun Mar 10 14:15:53 2024 -0700
+  commit 3dad34414937a2f3295a6f43f61c0538f2ad0257
+  Author: Patrick Thomson <patrickt@github.com>
+  Date:   Thu Mar 14 12:14:11 2024 -0400
   
-      Add missing function parts for init declarations
+      Recognize `distributed` as a modifier on actors and functions.
+      
+      I elected to specify this as a `property_modifier` given that it's a property of
+      both actors and functions. I considered creating a whole `actor_declaration`
+      node but that seemed a little much. Happy to move this around if needs be.
 ---
 File: semgrep-grammars/src/semgrep-swift/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
