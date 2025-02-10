@@ -8,127 +8,17 @@
 open! Sexplib.Conv
 open Tree_sitter_run
 
-type fake_try_bang = Token.t
-
-type plus_then_ws = Token.t
-
-type inheritance_modifier = [ `Final of Token.t (* "final" *) ]
+type multiline_comment_explicit = unit (* blank *)
 
 type pat_f630af3 = Token.t (* pattern [^\r\n]* *)
 
-type pat_c6c5536 = Token.t (* pattern #\/\n *)
-
-type async_modifier = Token.t
-
-type mutation_modifier = [
-    `Muta of Token.t (* "mutating" *)
-  | `Nonm of Token.t (* "nonmutating" *)
-]
-
-type special_literal = [
-    `HASH_36725ee of Token.t (* "#file" *)
-  | `HASH_ee0b998 of Token.t (* "#fileID" *)
-  | `HASH_bd759bd of Token.t (* "#filePath" *)
-  | `HASH_709af6a of Token.t (* "#line" *)
-  | `HASH_be35129 of Token.t (* "#column" *)
-  | `HASH_96a7ced of Token.t (* "#function" *)
-  | `HASH_4d47dbe of Token.t (* "#dsohandle" *)
-]
-
-type oct_literal = Token.t
-
-type multiline_comment_explicit = unit (* blank *)
-
-type custom_operator_ = Token.t
-
-type tok_dollar_pat_88eeeaa = Token.t
-
-type pat_c332828 = Token.t (* pattern \$[0-9]+ *)
-
-type value_binding_pattern = [
-    `Var of Token.t (* "var" *)
-  | `Let of Token.t (* "let" *)
-]
-
-type parameter_ownership_modifier = [
-    `Borr of Token.t (* "borrowing" *)
-  | `Cons of Token.t (* "consuming" *)
-]
-
-type multiline_comment = Token.t
-
-type raw_str_interpolation_start = Token.t (* pattern \\#*\( *)
-
-type throws_keyword = Token.t
-
-type arrow_operator_custom = Token.t
-
-type statement_label = Token.t
-
-type catch_keyword = Token.t
-
-type bitwise_binary_operator = [
-    `AMP of Token.t (* "&" *)
-  | `BAR of Token.t (* "|" *)
-  | `HAT of Token.t (* "^" *)
-  | `LTLT of Token.t (* "<<" *)
-  | `GTGT of Token.t (* ">>" *)
-]
-
-type disjunction_operator_custom = Token.t
-
-type multi_line_str_text = Token.t (* pattern "[^\\\\\"]+" *)
-
-type imm_tok_bang = Token.t (* "!" *)
-
-type nil_coalescing_operator_custom = Token.t
-
-type pat_97d645c = Token.t (* pattern `[^\r\n` ]*` *)
-
-type pat_888b548 = Token.t (* pattern \{[0-9a-fA-F]+\} *)
-
-type async_keyword_custom = Token.t
-
-type integer_literal = Token.t
+type extended_regex_literal = Token.t (* pattern #\/((\/[^#])|[^\n])+\/# *)
 
 type function_modifier = [
     `Infix of Token.t (* "infix" *)
   | `Post of Token.t (* "postfix" *)
   | `Prefix of Token.t (* "prefix" *)
 ]
-
-type tok_prec_n4_slash = Token.t
-
-type bang_custom = Token.t
-
-type default_keyword = Token.t
-
-type oneline_regex_literal = Token.t
-
-type else_ = Token.t
-
-type hex_literal = Token.t
-
-type raw_str_end_part = Token.t
-
-type implicit_semi = Token.t
-
-type as_bang_custom = Token.t
-
-type tok_pat_c201ddc = Token.t
-
-type raw_str_continuing_indicator = Token.t
-
-type comparison_operator = [
-    `LT of Token.t (* "<" *)
-  | `GT of Token.t (* ">" *)
-  | `LTEQ of Token.t (* "<=" *)
-  | `GTEQ of Token.t (* ">=" *)
-]
-
-type where_keyword = Token.t
-
-type dot_custom = Token.t
 
 type import_kind = [
     `Typeas of Token.t (* "typealias" *)
@@ -141,7 +31,100 @@ type import_kind = [
   | `Func of Token.t (* "func" *)
 ]
 
+type pat_c6c5536 = Token.t (* pattern #\/\n *)
+
+type pat_c332828 = Token.t (* pattern \$[0-9]+ *)
+
+type async_modifier = Token.t
+
+type hex_literal = Token.t
+
+type multiline_comment = Token.t
+
+type real_literal = Token.t
+
+type throws_keyword = Token.t
+
+type pat_97d645c = Token.t (* pattern `[^\r\n` ]*` *)
+
+type rethrows_keyword = Token.t
+
+type raw_str_end_part = Token.t
+
+type multi_line_str_text = Token.t (* pattern "[^\\\\\"]+" *)
+
+type arrow_operator_custom = Token.t
+
+type special_literal = [
+    `HASH_36725ee of Token.t (* "#file" *)
+  | `HASH_ee0b998 of Token.t (* "#fileID" *)
+  | `HASH_bd759bd of Token.t (* "#filePath" *)
+  | `HASH_709af6a of Token.t (* "#line" *)
+  | `HASH_be35129 of Token.t (* "#column" *)
+  | `HASH_96a7ced of Token.t (* "#function" *)
+  | `HASH_4d47dbe of Token.t (* "#dsohandle" *)
+]
+
+type catch_keyword = Token.t
+
+type bitwise_binary_operator = [
+    `AMP of Token.t (* "&" *)
+  | `BAR of Token.t (* "|" *)
+  | `HAT of Token.t (* "^" *)
+  | `LTLT of Token.t (* "<<" *)
+  | `GTGT of Token.t (* ">>" *)
+]
+
+type ownership_modifier = [
+    `Weak of Token.t (* "weak" *)
+  | `Unow_7c8c304 of Token.t (* "unowned" *)
+  | `Unow_e455cde of Token.t (* "unowned(safe)" *)
+  | `Unow_8fda70e of Token.t (* "unowned(unsafe)" *)
+]
+
+type pat_88eeeaa =
+  Token.t (* pattern [_\p{XID_Start}\p{Emoji}&&[^0-9#*]](\p{EMod}|\x{FE0F}\x{20E3}?)?([_\p{XID_Continue}\p{Emoji}\x{200D}](\p{EMod}|\x{FE0F}\x{20E3}?)?)* *)
+
+type pat_27d7db1 = Token.t (* pattern (\/[^#]|[^/])*?\n\/# *)
+
+type plus_then_ws = Token.t
+
+type statement_label = Token.t
+
+type async_keyword_custom = Token.t
+
+type inheritance_modifier = [ `Final of Token.t (* "final" *) ]
+
+type fake_try_bang = Token.t
+
+type tok_pat_c201ddc = Token.t
+
+type bang_custom = Token.t
+
+type custom_operator_ = Token.t
+
+type oct_literal = Token.t
+
+type raw_str_continuing_indicator = Token.t
+
 type imm_tok_qmark = Token.t (* "?" *)
+
+type as_bang_custom = Token.t
+
+type where_keyword = Token.t
+
+type tok_dollar_pat_88eeeaa = Token.t
+
+type tok_prec_n4_slash = Token.t
+
+type comparison_operator = [
+    `LT of Token.t (* "<" *)
+  | `GT of Token.t (* ">" *)
+  | `LTEQ of Token.t (* "<=" *)
+  | `GTEQ of Token.t (* ">=" *)
+]
+
+type implicit_semi = Token.t
 
 type property_modifier = [
     `Static of Token.t (* "static" *)
@@ -151,24 +134,21 @@ type property_modifier = [
   | `Dist of Token.t (* "distributed" *)
 ]
 
-type rethrows_keyword = Token.t
+type imm_tok_bang = Token.t (* "!" *)
 
-type extended_regex_literal = Token.t (* pattern #\/((\/[^#])|[^\n])+\/# *)
+type minus_then_ws = Token.t
+
+type explicit_semi = Token.t
+
+type semgrep_ellipsis_metavar =
+  Token.t (* pattern \$\.\.\.[a-zA-Z_][a-zA-Z_0-9]* *)
 
 type boolean_literal = [
     `True of Token.t (* "true" *)
   | `False of Token.t (* "false" *)
 ]
 
-type line_str_text = Token.t (* pattern "[^\\\\\"]+" *)
-
-type explicit_semi = Token.t
-
-type minus_then_ws = Token.t
-
-type real_literal = Token.t
-
-type pat_27d7db1 = Token.t (* pattern (\/[^#]|[^/])*?\n\/# *)
+type escaped_identifier = Token.t (* pattern "\\\\[0\\\\tnr\"'\\n]" *)
 
 type member_modifier = [
     `Over of Token.t (* "override" *)
@@ -177,19 +157,24 @@ type member_modifier = [
   | `Noni of Token.t (* "nonisolated" *)
 ]
 
-type pat_88eeeaa =
-  Token.t (* pattern [_\p{XID_Start}\p{Emoji}&&[^0-9#*]](\p{EMod}|\x{FE0F}\x{20E3}?)?([_\p{XID_Continue}\p{Emoji}\x{200D}](\p{EMod}|\x{FE0F}\x{20E3}?)?)* *)
+type eq_eq_custom = Token.t
 
-type ownership_modifier = [
-    `Weak of Token.t (* "weak" *)
-  | `Unow_7c8c304 of Token.t (* "unowned" *)
-  | `Unow_e455cde of Token.t (* "unowned(safe)" *)
-  | `Unow_8fda70e of Token.t (* "unowned(unsafe)" *)
-]
+type oneline_regex_literal = Token.t
 
 type raw_str_part = Token.t
 
-type eq_custom = Token.t
+type parameter_ownership_modifier = [
+    `Borr of Token.t (* "borrowing" *)
+  | `Cons of Token.t (* "consuming" *)
+]
+
+type pat_888b548 = Token.t (* pattern \{[0-9a-fA-F]+\} *)
+
+type default_keyword = Token.t
+
+type disjunction_operator_custom = Token.t
+
+type integer_literal = Token.t
 
 type optionally_valueful_control_keyword = [
     `Ret of Token.t (* "return" *)
@@ -198,43 +183,41 @@ type optionally_valueful_control_keyword = [
   | `Yield of Token.t (* "yield" *)
 ]
 
+type raw_str_interpolation_start = Token.t (* pattern \\#*\( *)
+
+type else_ = Token.t
+
 type as_quest_custom = Token.t
 
-type escaped_identifier = Token.t (* pattern "\\\\[0\\\\tnr\"'\\n]" *)
+type eq_custom = Token.t
+
+type value_binding_pattern = [
+    `Var of Token.t (* "var" *)
+  | `Let of Token.t (* "let" *)
+]
+
+type dot_custom = Token.t
+
+type line_str_text = Token.t (* pattern "[^\\\\\"]+" *)
+
+type mutation_modifier = [
+    `Muta of Token.t (* "mutating" *)
+  | `Nonm of Token.t (* "nonmutating" *)
+]
 
 type as_custom = Token.t
 
 type conjunction_operator_custom = Token.t
 
-type semgrep_ellipsis_metavar =
-  Token.t (* pattern \$\.\.\.[a-zA-Z_][a-zA-Z_0-9]* *)
-
-type eq_eq_custom = Token.t
+type nil_coalescing_operator_custom = Token.t
 
 type bin_literal = Token.t
 
 type shebang_line = (Token.t (* "#!" *) * pat_f630af3)
 
-type setter_specifier = (mutation_modifier option * Token.t (* "set" *))
-
-type modify_specifier = (mutation_modifier option * Token.t (* "_modify" *))
-
-type possibly_async_binding_pattern_kind = (
-    async_modifier (*tok*) option
-  * value_binding_pattern
-)
-
-type parameter_modifier = [
-    `Inout of Token.t (* "inout" *)
-  | `ATes of Token.t (* "@escaping" *)
-  | `ATau of Token.t (* "@autoclosure" *)
-  | `Param_owne_modi of parameter_ownership_modifier
-]
-
-type multiplicative_operator = [
-    `STAR of Token.t (* "*" *)
-  | `Tok_prec_n4_slash of tok_prec_n4_slash (*tok*)
-  | `PERC of Token.t (* "%" *)
+type throws = [
+    `Throws_kw of throws_keyword (*tok*)
+  | `Rethrs_kw of rethrows_keyword (*tok*)
 ]
 
 type bang = [
@@ -247,19 +230,15 @@ type custom_operator = [
   | `Custom_op_ of custom_operator_ (*tok*)
 ]
 
+type multiplicative_operator = [
+    `STAR of Token.t (* "*" *)
+  | `Tok_prec_n4_slash of tok_prec_n4_slash (*tok*)
+  | `PERC of Token.t (* "%" *)
+]
+
 type try_operator_type = [
     `Imm_tok_bang of imm_tok_bang (*tok*)
   | `Imm_tok_qmark of imm_tok_qmark (*tok*)
-]
-
-type throws = [
-    `Throws_kw of throws_keyword (*tok*)
-  | `Rethrs_kw of rethrows_keyword (*tok*)
-]
-
-type semi = [
-    `Impl_semi of implicit_semi (*tok*)
-  | `Expl_semi of explicit_semi (*tok*)
 ]
 
 type additive_operator = [
@@ -269,9 +248,81 @@ type additive_operator = [
   | `DASH of Token.t (* "-" *)
 ]
 
+type locally_permitted_modifier = [
+    `Owne_modi of ownership_modifier
+  | `Inhe_modi of inheritance_modifier
+  | `Prop_beha_modi of Token.t (* "lazy" *)
+]
+
+type semi = [
+    `Impl_semi of implicit_semi (*tok*)
+  | `Expl_semi of explicit_semi (*tok*)
+]
+
+type contextual_simple_identifier = [
+    `Actor of Token.t (* "actor" *)
+  | `Async of Token.t (* "async" *)
+  | `Each of Token.t (* "each" *)
+  | `Lazy of Token.t (* "lazy" *)
+  | `Repeat of Token.t (* "repeat" *)
+  | `Param_owne_modi of parameter_ownership_modifier
+]
+
+type parameter_modifier = [
+    `Inout of Token.t (* "inout" *)
+  | `ATes of Token.t (* "@escaping" *)
+  | `ATau of Token.t (* "@autoclosure" *)
+  | `Param_owne_modi of parameter_ownership_modifier
+]
+
 type range_operator = [
     `Open_ended_range_op of Token.t (* "..<" *)
   | `Three_dot_op of Token.t (* "..." *)
+]
+
+type possibly_async_binding_pattern_kind = (
+    async_modifier (*tok*) option
+  * value_binding_pattern
+)
+
+type setter_specifier = (mutation_modifier option * Token.t (* "set" *))
+
+type modify_specifier = (mutation_modifier option * Token.t (* "_modify" *))
+
+type regex_literal = [
+    `Exte_regex_lit of extended_regex_literal (*tok*)
+  | `Mult_regex_lit of (pat_c6c5536 * pat_27d7db1)
+  | `Onel_regex_lit of oneline_regex_literal (*tok*)
+]
+
+type getter_effects =
+  [ `Async_kw of async_keyword_custom (*tok*) | `Throws of throws ]
+    list (* one or more *)
+
+type postfix_unary_operator = [
+    `PLUSPLUS of Token.t (* "++" *)
+  | `DASHDASH of Token.t (* "--" *)
+  | `Bang of bang
+]
+
+type try_operator = (
+    Token.t (* "try" *)
+  * [
+        `Opt_try_op_type of try_operator_type option
+      | `Fake_try_bang of fake_try_bang (*tok*)
+    ]
+)
+
+type class_member_separator = [
+    `Semi of semi
+  | `Mult_comm_expl of multiline_comment_explicit (*tok*)
+]
+
+type equality_operator = [
+    `BANGEQ of Token.t (* "!=" *)
+  | `BANGEQEQ of Token.t (* "!==" *)
+  | `Eq_eq of eq_eq_custom (*tok*)
+  | `EQEQEQ of Token.t (* "===" *)
 ]
 
 type simple_identifier = [
@@ -279,18 +330,8 @@ type simple_identifier = [
   | `Pat_97d645c of pat_97d645c
   | `Pat_c332828 of pat_c332828
   | `Tok_dollar_pat_88eeeaa of tok_dollar_pat_88eeeaa
-  | `Actor of Token.t (* "actor" *)
-  | `Lazy of Token.t (* "lazy" *)
-  | `Param_owne_modi of parameter_ownership_modifier
+  | `Cont_simple_id of contextual_simple_identifier
 ]
-
-type locally_permitted_modifier = [
-    `Owne_modi of ownership_modifier
-  | `Inhe_modi of inheritance_modifier
-  | `Prop_beha_modi of Token.t (* "lazy" *)
-]
-
-type parameter_modifiers = parameter_modifier list (* one or more *)
 
 type non_local_scope_modifier = [
     `Member_modi of member_modifier
@@ -310,15 +351,20 @@ type non_local_scope_modifier = [
   | `Param_modi of parameter_modifier
 ]
 
+type parameter_modifiers = parameter_modifier list (* one or more *)
+
 type str_escaped_char = [
     `Esca_id of escaped_identifier (*tok*)
   | `Uni_char_lit of (Token.t (* "\\" *) * Token.t (* "u" *) * pat_888b548)
 ]
 
-type postfix_unary_operator = [
-    `PLUSPLUS of Token.t (* "++" *)
-  | `DASHDASH of Token.t (* "--" *)
-  | `Bang of bang
+type assignment_and_operator = [
+    `PLUSEQ of Token.t (* "+=" *)
+  | `DASHEQ of Token.t (* "-=" *)
+  | `STAREQ of Token.t (* "*=" *)
+  | `SLASHEQ of Token.t (* "/=" *)
+  | `PERCEQ of Token.t (* "%=" *)
+  | `Equal_sign of eq_custom (*tok*)
 ]
 
 type prefix_unary_operator = [
@@ -333,52 +379,19 @@ type prefix_unary_operator = [
   | `Custom_op of custom_operator
 ]
 
-type try_operator = (
-    Token.t (* "try" *)
-  * [
-        `Opt_try_op_type of try_operator_type option
-      | `Fake_try_bang of fake_try_bang (*tok*)
-    ]
-)
-
-type getter_effects =
-  [ `Async_kw of async_keyword_custom (*tok*) | `Throws of throws ]
-    list (* one or more *)
-
-type class_member_separator = [
-    `Semi of semi
-  | `Mult_comm_expl of multiline_comment_explicit (*tok*)
-]
-
-type regex_literal = [
-    `Exte_regex_lit of extended_regex_literal (*tok*)
-  | `Mult_regex_lit of (pat_c6c5536 * pat_27d7db1)
-  | `Onel_regex_lit of oneline_regex_literal (*tok*)
-]
-
-type bound_identifier = simple_identifier
-
-type assignment_and_operator = [
-    `PLUSEQ of Token.t (* "+=" *)
-  | `DASHEQ of Token.t (* "-=" *)
-  | `STAREQ of Token.t (* "*=" *)
-  | `SLASHEQ of Token.t (* "/=" *)
-  | `PERCEQ of Token.t (* "%=" *)
-  | `Equal_sign of eq_custom (*tok*)
-]
-
 type as_operator = [
     `As of as_custom (*tok*)
   | `As_quest of as_quest_custom (*tok*)
   | `As_bang of as_bang_custom (*tok*)
 ]
 
-type equality_operator = [
-    `BANGEQ of Token.t (* "!=" *)
-  | `BANGEQEQ of Token.t (* "!==" *)
-  | `Eq_eq of eq_eq_custom (*tok*)
-  | `EQEQEQ of Token.t (* "===" *)
-]
+type getter_specifier = (
+    mutation_modifier option
+  * Token.t (* "get" *)
+  * getter_effects option
+)
+
+type bound_identifier = simple_identifier
 
 type multi_line_string_content = [
     `Multi_line_str_text of multi_line_str_text (*tok*)
@@ -389,47 +402,6 @@ type multi_line_string_content = [
 type line_string_content = [
     `Line_str_text of line_str_text (*tok*)
   | `Str_esca_char of str_escaped_char
-]
-
-type getter_specifier = (
-    mutation_modifier option
-  * Token.t (* "get" *)
-  * getter_effects option
-)
-
-type identifier = (
-    bound_identifier
-  * (dot_custom (*tok*) * bound_identifier) list (* zero or more *)
-)
-
-type precedence_group_attribute = (
-    bound_identifier
-  * Token.t (* ":" *)
-  * [ `Simple_id of bound_identifier | `Bool_lit of boolean_literal ]
-)
-
-type value_argument_label = [
-    `Simple_id of bound_identifier
-  | `Async of Token.t (* "async" *)
-  | `If of Token.t (* "if" *)
-  | `Switch of Token.t (* "switch" *)
-]
-
-type tuple_type_item_identifier = (
-    Token.t (* "_" *) option
-  * bound_identifier
-  * Token.t (* ":" *)
-)
-
-type navigation_suffix = [
-    `Dot_choice_simple_id of (
-        dot_custom (*tok*)
-      * [
-            `Simple_id of bound_identifier
-          | `Int_lit of integer_literal (*tok*)
-        ]
-    )
-  | `Dot_semg_ellips of (dot_custom (*tok*) * Token.t (* "..." *))
 ]
 
 type referenceable_operator = [
@@ -457,6 +429,48 @@ type protocol_property_requirements = (
   * Token.t (* "}" *)
 )
 
+type precedence_group_attribute = (
+    bound_identifier
+  * Token.t (* ":" *)
+  * [ `Simple_id of bound_identifier | `Bool_lit of boolean_literal ]
+)
+
+type value_argument_label = [
+    `Simple_id of bound_identifier
+  | `If of Token.t (* "if" *)
+  | `Switch of Token.t (* "switch" *)
+]
+
+type identifier = (
+    bound_identifier
+  * (dot_custom (*tok*) * bound_identifier) list (* zero or more *)
+)
+
+type navigation_suffix = [
+    `Dot_choice_simple_id of (
+        dot_custom (*tok*)
+      * [
+            `Simple_id of bound_identifier
+          | `Int_lit of integer_literal (*tok*)
+        ]
+    )
+  | `Dot_semg_ellips of (dot_custom (*tok*) * Token.t (* "..." *))
+]
+
+type tuple_type_item_identifier = (
+    Token.t (* "_" *) option
+  * bound_identifier
+  * Token.t (* ":" *)
+)
+
+type non_constructor_function_decl = (
+    Token.t (* "func" *)
+  * [ `Simple_id of bound_identifier | `Refe_op of referenceable_operator ]
+)
+
+type precedence_group_attributes =
+  precedence_group_attribute list (* one or more *)
+
 type availability_argument = [
     `Id_int_lit_rep_DOT_int_lit of (
         identifier
@@ -465,14 +479,6 @@ type availability_argument = [
     )
   | `STAR of Token.t (* "*" *)
 ]
-
-type precedence_group_attributes =
-  precedence_group_attribute list (* one or more *)
-
-type non_constructor_function_decl = (
-    Token.t (* "func" *)
-  * [ `Simple_id of bound_identifier | `Refe_op of referenceable_operator ]
-)
 
 type precedence_group_declaration = (
     Token.t (* "precedencegroup" *)
@@ -705,6 +711,19 @@ and computed_setter = (
   * function_body option
 )
 
+and constrained_type = [
+    `Id of identifier
+  | `Unan_type_opt_DOT_simple_id_rep_DOT_simple_id of (
+        unannotated_type
+      * (
+            Token.t (* "." *)
+          * bound_identifier
+          * (Token.t (* "." *) * bound_identifier) list (* zero or more *)
+        )
+          option
+    )
+]
+
 and constructor_suffix = [
     `Cons_value_args of constructor_value_arguments
   | `Fn_call_lambda_args of fn_call_lambda_arguments
@@ -840,10 +859,11 @@ and expression = [
       | `If_stmt of if_statement
       | `Switch_stmt of switch_statement
       | `Assign of assignment
+      | `Value_param_pack of value_parameter_pack
+      | `Value_pack_expa of value_pack_expansion
       | `Exp_imme_quest of (
             directly_assignable_expression * Token.t (* "?" *)
         )
-      | `Async of Token.t (* "async" *)
     ]
   | `Semg_exp_ellips of Token.t (* "..." *)
   | `Semg_ellips_meta of semgrep_ellipsis_metavar (*tok*)
@@ -1378,6 +1398,7 @@ and repeat_while_statement = (
   * Token.t (* "{" *)
   * statements option
   * Token.t (* "}" *)
+  * implicit_semi (*tok*) list (* zero or more *)
   * Token.t (* "while" *)
   * if_condition_sequence_item
   * (Token.t (* "," *) * if_condition_sequence_item) list (* zero or more *)
@@ -1540,13 +1561,13 @@ and type_casting_pattern = [
 and type_constraint = [
     `Inhe_cons of (
         attribute list (* zero or more *)
-      * identifier
+      * constrained_type
       * Token.t (* ":" *)
       * possibly_implicitly_unwrapped_type
     )
   | `Equa_cons of (
         attribute list (* zero or more *)
-      * identifier
+      * constrained_type
       * [ `Equal_sign of eq_custom (*tok*) | `Eq_eq of eq_eq_custom (*tok*) ]
       * type_
     )
@@ -1579,15 +1600,22 @@ and type_level_declaration = [
 and type_modifiers = attribute list (* one or more *)
 
 and type_parameter = [
-    `Opt_type_param_modifs_simple_id_opt_COLON_type of (
+    `Opt_type_param_modifs_type_param_poss_packed_opt_COLON_type of (
         type_parameter_modifiers option
-      * bound_identifier
+      * type_parameter_possibly_packed
       * (Token.t (* ":" *) * type_) option
     )
   | `Semg_ellips of Token.t (* "..." *)
 ]
 
 and type_parameter_modifiers = attribute list (* one or more *)
+
+and type_parameter_pack = (Token.t (* "each" *) * unannotated_type)
+
+and type_parameter_possibly_packed = [
+    `Simple_id of bound_identifier
+  | `Type_param_pack of type_parameter_pack
+]
 
 and type_parameters = (
     Token.t (* "<" *)
@@ -1628,6 +1656,8 @@ and unannotated_type = [
         unannotated_type
       * (Token.t (* "&" *) * unannotated_type) list (* one or more *)
     )
+  | `Type_param_pack of type_parameter_pack
+  | `Type_pack_expa of (Token.t (* "repeat" *) * unannotated_type)
 ]
 
 and unary_expression = [
@@ -1720,6 +1750,14 @@ and value_arguments = [
     )
 ]
 
+and value_pack_expansion = (
+    Token.t (* "repeat" *) * directly_assignable_expression
+)
+
+and value_parameter_pack = (
+    Token.t (* "each" *) * directly_assignable_expression
+)
+
 and where_clause = (where_keyword (*tok*) * directly_assignable_expression)
 
 and while_statement = (
@@ -1810,48 +1848,17 @@ type source_file = (
       option
 )
 
-type property_behavior_modifier (* inlined *) = Token.t (* "lazy" *)
-
-type self_expression (* inlined *) = Token.t (* "self" *)
-
-type comment (* inlined *) = Token.t
-
-type semgrep_ellipsis (* inlined *) = Token.t (* "..." *)
-
-type await_operator (* inlined *) = Token.t (* "await" *)
-
-type use_site_target (* inlined *) = (
-    [
-        `Prop of Token.t (* "property" *)
-      | `Get of Token.t (* "get" *)
-      | `Set of Token.t (* "set" *)
-      | `Rece of Token.t (* "receiver" *)
-      | `Param of Token.t (* "param" *)
-      | `Setp of Token.t (* "setparam" *)
-      | `Dele of Token.t (* "delegate" *)
-    ]
-  * Token.t (* ":" *)
-)
-
-type immediate_quest (* inlined *) = Token.t (* "?" *)
+type semgrep_expression_ellipsis (* inlined *) = Token.t (* "..." *)
 
 type wildcard_pattern (* inlined *) = Token.t (* "_" *)
 
-type three_dot_operator (* inlined *) = Token.t (* "..." *)
+type comment (* inlined *) = Token.t
 
-type throw_keyword (* inlined *) = Token.t (* "throw" *)
+type self_expression (* inlined *) = Token.t (* "self" *)
 
-type directive (* inlined *) = Token.t
+type await_operator (* inlined *) = Token.t (* "await" *)
 
-type semgrep_expression_ellipsis (* inlined *) = Token.t (* "..." *)
-
-type open_ended_range_operator (* inlined *) = Token.t (* "..<" *)
-
-type quest (* inlined *) = Token.t (* "?" *)
-
-type diagnostic (* inlined *) = Token.t
-
-type is_operator (* inlined *) = Token.t (* "is" *)
+type immediate_quest (* inlined *) = Token.t (* "?" *)
 
 type unused_for_backward_compatibility (* inlined *) = [
     `Unused1 of Token.t (* "unused1" *)
@@ -1871,36 +1878,67 @@ type visibility_modifier (* inlined *) = (
   * (Token.t (* "(" *) * Token.t (* "set" *) * Token.t (* ")" *)) option
 )
 
+type use_site_target (* inlined *) = (
+    [
+        `Prop of Token.t (* "property" *)
+      | `Get of Token.t (* "get" *)
+      | `Set of Token.t (* "set" *)
+      | `Rece of Token.t (* "receiver" *)
+      | `Param of Token.t (* "param" *)
+      | `Setp of Token.t (* "setparam" *)
+      | `Dele of Token.t (* "delegate" *)
+    ]
+  * Token.t (* ":" *)
+)
+
+type three_dot_operator (* inlined *) = Token.t (* "..." *)
+
+type diagnostic (* inlined *) = Token.t
+
+type property_behavior_modifier (* inlined *) = Token.t (* "lazy" *)
+
+type throw_keyword (* inlined *) = Token.t (* "throw" *)
+
+type is_operator (* inlined *) = Token.t (* "is" *)
+
+type open_ended_range_operator (* inlined *) = Token.t (* "..<" *)
+
+type quest (* inlined *) = Token.t (* "?" *)
+
+type directive (* inlined *) = Token.t
+
+type semgrep_ellipsis (* inlined *) = Token.t (* "..." *)
+
 type dummy_alias0 (* inlined *) = multiline_comment (*tok*)
 
 type arrow_operator (* inlined *) = arrow_operator_custom (*tok*)
 
-type disjunction_operator (* inlined *) = disjunction_operator_custom (*tok*)
-
-type nil_coalescing_operator (* inlined *) =
-  nil_coalescing_operator_custom (*tok*)
-
-type uni_character_literal (* inlined *) = (
-    Token.t (* "\\" *) * Token.t (* "u" *) * pat_888b548
-)
+type multiline_regex_literal (* inlined *) = (pat_c6c5536 * pat_27d7db1)
 
 type async_keyword (* inlined *) = async_keyword_custom (*tok*)
 
 type as_bang (* inlined *) = as_bang_custom (*tok*)
 
-type dot (* inlined *) = dot_custom (*tok*)
+type eq_eq (* inlined *) = eq_eq_custom (*tok*)
 
-type multiline_regex_literal (* inlined *) = (pat_c6c5536 * pat_27d7db1)
+type uni_character_literal (* inlined *) = (
+    Token.t (* "\\" *) * Token.t (* "u" *) * pat_888b548
+)
+
+type disjunction_operator (* inlined *) = disjunction_operator_custom (*tok*)
+
+type as_quest (* inlined *) = as_quest_custom (*tok*)
 
 type equal_sign (* inlined *) = eq_custom (*tok*)
 
-type as_quest (* inlined *) = as_quest_custom (*tok*)
+type dot (* inlined *) = dot_custom (*tok*)
 
 type as_ (* inlined *) = as_custom (*tok*)
 
 type conjunction_operator (* inlined *) = conjunction_operator_custom (*tok*)
 
-type eq_eq (* inlined *) = eq_eq_custom (*tok*)
+type nil_coalescing_operator (* inlined *) =
+  nil_coalescing_operator_custom (*tok*)
 
 type modifier (* inlined *) = [
     `Non_local_scope_modi of non_local_scope_modifier
@@ -2023,7 +2061,7 @@ type enum_type_parameters (* inlined *) = (
 
 type equality_constraint (* inlined *) = (
     attribute list (* zero or more *)
-  * identifier
+  * constrained_type
   * [ `Equal_sign of eq_custom (*tok*) | `Eq_eq of eq_eq_custom (*tok*) ]
   * type_
 )
@@ -2054,7 +2092,7 @@ type infix_expression (* inlined *) = (
 
 type inheritance_constraint (* inlined *) = (
     attribute list (* zero or more *)
-  * identifier
+  * constrained_type
   * Token.t (* ":" *)
   * possibly_implicitly_unwrapped_type
 )
@@ -2251,6 +2289,10 @@ type tuple_expression (* inlined *) = (
     )
       list (* zero or more *)
   * Token.t (* ")" *)
+)
+
+type type_pack_expansion (* inlined *) = (
+    Token.t (* "repeat" *) * unannotated_type
 )
 
 type non_binding_pattern_with_expr (* inlined *) = (

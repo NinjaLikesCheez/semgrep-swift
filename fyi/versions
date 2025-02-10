@@ -1,6 +1,6 @@
 File: semgrep-grammars/src/tree-sitter-swift/LICENSE
 Git repo name: tree-sitter-swift
-Latest commit in repo: 3dad34414937a2f3295a6f43f61c0538f2ad0257
+Latest commit in repo: 78a736d77094b0b3c35e811e6765c4d38a72724e
 Last change in file:
   commit 90cd9604a7db32fbec45a040a7bdb6aaa89b565c
   gpg: Signature made Sat 14 Aug 18:10:20 2021 CEST
@@ -13,17 +13,26 @@ Last change in file:
 ---
 File: semgrep-grammars/src/tree-sitter-swift/grammar.js
 Git repo name: tree-sitter-swift
-Latest commit in repo: 3dad34414937a2f3295a6f43f61c0538f2ad0257
+Latest commit in repo: 78a736d77094b0b3c35e811e6765c4d38a72724e
 Last change in file:
-  commit 3dad34414937a2f3295a6f43f61c0538f2ad0257
-  Author: Patrick Thomson <patrickt@github.com>
-  Date:   Thu Mar 14 12:14:11 2024 -0400
+  commit 78a736d77094b0b3c35e811e6765c4d38a72724e
+  Author: Alex Pinkus (Bot) <alex.pinkus@gmail.com>
+  Date:   Thu Mar 14 19:30:47 2024 -0700
   
-      Recognize `distributed` as a modifier on actors and functions.
+      Add support for SE-0393
       
-      I elected to specify this as a `property_modifier` given that it's a property of
-      both actors and functions. I considered creating a whole `actor_declaration`
-      node but that seemed a little much. Happy to move this around if needs be.
+      This adds new rules for parameter packs and expansions in both type and
+      expression position. Since this includes the keyword "repeat", which was
+      already a keyword for a do-while loop, we must modify the do-while loop
+      rule so that it remains valid long enough to disqualify the
+      parameter-pack interpretation.
+      
+      With this change, it's starting to look like the "contextual keyword
+      that is special cased as an identifier" pattern is going to become more
+      standard. To facilitate that, this creates an explicit (hidden) rule for
+      it.
+      
+      Fixes #381
 ---
 File: semgrep-grammars/src/semgrep-swift/grammar.js
 Git repo name: ocaml-tree-sitter-semgrep
