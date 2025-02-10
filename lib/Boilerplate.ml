@@ -2159,7 +2159,7 @@ and map_inheritance_specifiers (env : env) ((v1, v2) : CST.inheritance_specifier
   in
   R.Tuple [v1; v2]
 
-and map_init_declaration (env : env) ((v1, v2, v3, v4, v5, v6) : CST.init_declaration) =
+and map_init_declaration (env : env) ((v1, v2, v3, v4, v5, v6, v7, v8, v9, v10) : CST.init_declaration) =
   let v1 =
     (match v1 with
     | Some x -> R.Option (Some (
@@ -2189,9 +2189,43 @@ and map_init_declaration (env : env) ((v1, v2, v3, v4, v5, v6) : CST.init_declar
       ))
     | None -> R.Option None)
   in
-  let v5 = map_function_value_parameters env v5 in
-  let v6 = map_function_body env v6 in
-  R.Tuple [v1; v2; v3; v4; v5; v6]
+  let v5 =
+    (match v5 with
+    | Some x -> R.Option (Some (
+        map_type_parameters env x
+      ))
+    | None -> R.Option None)
+  in
+  let v6 = map_function_value_parameters env v6 in
+  let v7 =
+    (match v7 with
+    | Some tok -> R.Option (Some (
+        (* async_keyword_custom *) token env tok
+      ))
+    | None -> R.Option None)
+  in
+  let v8 =
+    (match v8 with
+    | Some x -> R.Option (Some (
+        map_throws env x
+      ))
+    | None -> R.Option None)
+  in
+  let v9 =
+    (match v9 with
+    | Some x -> R.Option (Some (
+        map_type_constraints env x
+      ))
+    | None -> R.Option None)
+  in
+  let v10 =
+    (match v10 with
+    | Some x -> R.Option (Some (
+        map_function_body env x
+      ))
+    | None -> R.Option None)
+  in
+  R.Tuple [v1; v2; v3; v4; v5; v6; v7; v8; v9; v10]
 
 and map_interpolation (env : env) ((v1, v2, v3) : CST.interpolation) =
   let v1 = (* "\\(" *) token env v1 in

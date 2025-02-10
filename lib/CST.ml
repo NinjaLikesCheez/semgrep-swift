@@ -977,8 +977,12 @@ and init_declaration = (
   * Token.t (* "class" *) option
   * Token.t (* "init" *)
   * [ `Quest of Token.t (* "?" *) | `Bang of bang ] option
+  * type_parameters option
   * function_value_parameters
-  * function_body
+  * async_keyword_custom (*tok*) option
+  * throws option
+  * type_constraints option
+  * function_body option
 )
 
 and interpolation = (

@@ -1756,8 +1756,22 @@ let children_regexps : (string * Run.exp option) list = [
           Token (Name "bang");
         |];
       );
+      Opt (
+        Token (Name "type_parameters");
+      );
       Token (Name "function_value_parameters");
-      Token (Name "function_body");
+      Opt (
+        Token (Name "async_keyword");
+      );
+      Opt (
+        Token (Name "throws");
+      );
+      Opt (
+        Token (Name "type_constraints");
+      );
+      Opt (
+        Token (Name "function_body");
+      );
     ];
   );
   "interpolation",
@@ -7112,7 +7126,7 @@ and trans_init_declaration ((kind, body) : mt) : CST.init_declaration =
   match body with
   | Children v ->
       (match v with
-      | Seq [v0; v1; v2; v3; v4; v5] ->
+      | Seq [v0; v1; v2; v3; v4; v5; v6; v7; v8; v9] ->
           (
             Run.opt
               (fun v -> trans_modifiers (Run.matcher_token v))
@@ -7139,8 +7153,26 @@ and trans_init_declaration ((kind, body) : mt) : CST.init_declaration =
               )
               v3
             ,
-            trans_function_value_parameters (Run.matcher_token v4),
-            trans_function_body (Run.matcher_token v5)
+            Run.opt
+              (fun v -> trans_type_parameters (Run.matcher_token v))
+              v4
+            ,
+            trans_function_value_parameters (Run.matcher_token v5),
+            Run.opt
+              (fun v -> trans_async_keyword (Run.matcher_token v))
+              v6
+            ,
+            Run.opt
+              (fun v -> trans_throws (Run.matcher_token v))
+              v7
+            ,
+            Run.opt
+              (fun v -> trans_type_constraints (Run.matcher_token v))
+              v8
+            ,
+            Run.opt
+              (fun v -> trans_function_body (Run.matcher_token v))
+              v9
           )
       | _ -> assert false
       )
