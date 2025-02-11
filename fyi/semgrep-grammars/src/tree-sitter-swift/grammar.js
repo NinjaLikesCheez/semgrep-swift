@@ -71,6 +71,7 @@ const HEX_DIGITS = token(sep1(/[0-9a-fA-F]+/, /_+/));
 const OCT_DIGITS = token(sep1(/[0-7]+/, /_+/));
 const BIN_DIGITS = token(sep1(/[01]+/, /_+/));
 const REAL_EXPONENT = token(seq(/[eE]/, optional(/[+-]/), DEC_DIGITS));
+const HEX_REAL_EXPONENT = token(seq(/[pP]/, optional(/[+-]/), DEC_DIGITS));
 
 var LEXICAL_IDENTIFIER;
 
@@ -106,7 +107,6 @@ module.exports = grammar({
     [$._additive_operator, $._prefix_unary_operator],
     [$._referenceable_operator, $._prefix_unary_operator],
     // `{ [self, b, c] ...` could be a capture list or an array literal depending on what else happens.
-    [$.capture_list_item, $.self_expression],
     [$.capture_list_item, $._expression],
     [$.capture_list_item, $._expression, $._simple_user_type],
     [$._primary_expression, $.capture_list_item],
@@ -134,22 +134,11 @@ module.exports = grammar({
       $.computed_modify,
       $.computed_setter,
     ],
-    // In a lambda literal's capture list, same problem with class attributes vs capture specifier attributes.
-    [
-      $.capture_list,
-      $._local_property_declaration,
-      $._local_typealias_declaration,
-      $._local_function_declaration,
-      $._local_class_declaration,
-    ],
     // The `class` modifier is legal in many of the same positions that a class declaration itself would be.
     [$._bodyless_function_declaration, $.property_modifier],
     [$.init_declaration, $.property_modifier],
-    [$._local_class_declaration, $.modifiers],
     // Patterns, man
     [$._navigable_type_expression, $._case_pattern],
-    [$._no_expr_pattern_already_bound, $._binding_pattern_with_expr],
-    [$._no_expr_pattern_already_bound, $._expression],
     [$._no_expr_pattern_already_bound, $._binding_pattern_no_expr],
 
     // On encountering a closure starting with `{ @Foo ...`, we don't yet know if that attribute applies to the closure
@@ -173,28 +162,9 @@ module.exports = grammar({
     // `actor` is allowed to be an identifier, even though it is also a locally permitted declaration. If we encounter
     // it, the only way to know what it's meant to be is to keep going.
     [$._modifierless_class_declaration, $.property_modifier],
-    [$._modifierless_class_declaration, $.simple_identifier],
     [$._fn_call_lambda_arguments],
 
-    // `lazy` is also allowed as an identifier...
-    [$.property_behavior_modifier, $.simple_identifier],
-
-    // SE-0380: if/switch expressions
-    [$._expression, $.if_statement],
-    [$._expression, $.switch_statement],
-
-    // Intentionally introduce a conflict for willSet/didSet. That's because if the parser sees a property declared as:
-    // ```
-    // let prop = value {
-    // ```
-    // it will interpret that token as a function call with a trailing lambda parameter before it has the chance to look
-    // for a `willSet` or `didSet`. To figure out the actual meaning, it must continue parsing and allowing both
-    // interpretations to see what it encounters after that.
-    [$.willset_didset_block],
-    [$._expression_without_willset_didset, $._expression_with_willset_didset],
-
     // `borrowing` and `consuming` are legal as identifiers, but are also legal modifiers
-    [$.simple_identifier, $.parameter_modifier],
     [$.parameter_modifiers],
 
     // These are keywords sometimes, but simple identifiers other times, and it just depends on the rest of their usage.
@@ -324,12 +294,17 @@ module.exports = grammar({
         $.regex_literal,
         "nil"
       ),
-    // TODO: Hex exponents
     real_literal: ($) =>
       token(
         choice(
           seq(DEC_DIGITS, REAL_EXPONENT),
-          seq(optional(DEC_DIGITS), ".", DEC_DIGITS, optional(REAL_EXPONENT))
+          seq(optional(DEC_DIGITS), ".", DEC_DIGITS, optional(REAL_EXPONENT)),
+          seq(
+            "0x",
+            HEX_DIGITS,
+            optional(seq(".", HEX_DIGITS)),
+            HEX_REAL_EXPONENT
+          )
         )
       ),
     integer_literal: ($) => token(seq(optional(/[1-9]/), DEC_DIGITS)),
