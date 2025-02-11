@@ -265,6 +265,7 @@ type contextual_simple_identifier = [
   | `Each of Token.t (* "each" *)
   | `Lazy of Token.t (* "lazy" *)
   | `Repeat of Token.t (* "repeat" *)
+  | `Pack of Token.t (* "package" *)
   | `Param_owne_modi of parameter_ownership_modifier
 ]
 
@@ -342,6 +343,7 @@ type non_local_scope_modifier = [
           | `Inte of Token.t (* "internal" *)
           | `File of Token.t (* "fileprivate" *)
           | `Open of Token.t (* "open" *)
+          | `Pack of Token.t (* "package" *)
         ]
       * (Token.t (* "(" *) * Token.t (* "set" *) * Token.t (* ")" *)) option
     )
@@ -1874,6 +1876,7 @@ type visibility_modifier (* inlined *) = (
       | `Inte of Token.t (* "internal" *)
       | `File of Token.t (* "fileprivate" *)
       | `Open of Token.t (* "open" *)
+      | `Pack of Token.t (* "package" *)
     ]
   * (Token.t (* "(" *) * Token.t (* "set" *) * Token.t (* ")" *)) option
 )

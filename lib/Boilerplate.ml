@@ -513,6 +513,9 @@ let map_contextual_simple_identifier (env : env) (x : CST.contextual_simple_iden
   | `Repeat tok -> R.Case ("Repeat",
       (* "repeat" *) token env tok
     )
+  | `Pack tok -> R.Case ("Pack",
+      (* "package" *) token env tok
+    )
   | `Param_owne_modi x -> R.Case ("Param_owne_modi",
       map_parameter_ownership_modifier env x
     )
@@ -702,6 +705,9 @@ let map_non_local_scope_modifier (env : env) (x : CST.non_local_scope_modifier) 
           )
         | `Open tok -> R.Case ("Open",
             (* "open" *) token env tok
+          )
+        | `Pack tok -> R.Case ("Pack",
+            (* "package" *) token env tok
           )
         )
       in

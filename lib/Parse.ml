@@ -144,6 +144,7 @@ let children_regexps : (string * Run.exp option) list = [
         Token (Literal "internal");
         Token (Literal "fileprivate");
         Token (Literal "open");
+        Token (Literal "package");
       |];
       Opt (
         Seq [
@@ -282,6 +283,7 @@ let children_regexps : (string * Run.exp option) list = [
       Token (Literal "each");
       Token (Literal "lazy");
       Token (Literal "repeat");
+      Token (Literal "package");
       Token (Name "parameter_ownership_modifier");
     |];
   );
@@ -3699,6 +3701,10 @@ let trans_visibility_modifier ((kind, body) : mt) : CST.visibility_modifier =
                 `Open (
                   Run.trans_token (Run.matcher_token v)
                 )
+            | Alt (5, v) ->
+                `Pack (
+                  Run.trans_token (Run.matcher_token v)
+                )
             | _ -> assert false
             )
             ,
@@ -4125,6 +4131,10 @@ let trans_contextual_simple_identifier ((kind, body) : mt) : CST.contextual_simp
             Run.trans_token (Run.matcher_token v)
           )
       | Alt (5, v) ->
+          `Pack (
+            Run.trans_token (Run.matcher_token v)
+          )
+      | Alt (6, v) ->
           `Param_owne_modi (
             trans_parameter_ownership_modifier (Run.matcher_token v)
           )
